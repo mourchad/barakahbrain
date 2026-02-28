@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>BarakahBrain Admin — Utilisateurs</title>
+    <link rel="icon" href="../assets/logo_BarakahBrain.png" type="image/png" />
+    <link rel="stylesheet" href="../assets/styles.css" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
+</head>
+
+<body style="background:var(--bb-bg)">
+
+    <div class="bb-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <aside class="bb-sidebar" id="mainSidebar">
+        <div class="bb-sidebar__brand">
+            <img src="../assets/logo_BarakahBrain.png" alt="BarakahBrain" />
+            <div class="bb-header__brand"><span class="bb-header__name">BarakahBrain</span></div>
+        </div>
+        <nav class="bb-sidebar__nav">
+            <div class="bb-sidebar__section">Général</div>
+            <a href="admin-dashboard.html" class="bb-sidebar__link"><span
+                    class="material-symbols-outlined bb-sidebar__icon">dashboard</span>Tableau de bord</a>
+            <a href="admin-utilisateurs.html" class="bb-sidebar__link bb-sidebar__link--active"><span
+                    class="material-symbols-outlined bb-sidebar__icon">group</span>Utilisateurs</a>
+            <a href="admin-questions.html" class="bb-sidebar__link"><span
+                    class="material-symbols-outlined bb-sidebar__icon">quiz</span>Questions</a>
+            <div class="bb-sidebar__section" style="margin-top:.5rem">Système</div>
+            <a href="admin-logs.html" class="bb-sidebar__link"><span
+                    class="material-symbols-outlined bb-sidebar__icon">history</span>Logs</a>
+            <a href="admin-parametres.html" class="bb-sidebar__link"><span
+                    class="material-symbols-outlined bb-sidebar__icon">settings</span>Paramètres</a>
+            <div class="bb-sidebar__section" style="margin-top:.5rem">Accès Élevé</div>
+            <a href="superadmin1.html" class="bb-sidebar__link"><span class="material-symbols-outlined bb-sidebar__icon"
+                    style="color:var(--bb-gold)">shield_person</span><span
+                    style="color:var(--bb-gold);font-weight:700">Superadmin1</span></a>
+            <a href="superadmin-stats.html" class="bb-sidebar__link">
+                <span class="material-symbols-outlined bb-sidebar__icon">monitoring</span>Stats Globales
+            </a>
+        </nav>
+        <div class="bb-sidebar__footer">
+            <div class="bb-sidebar__user">
+                <div class="bb-avatar bb-avatar--sm" id="adminAvatar" style="border-color:var(--bb-gold)">?</div>
+                <div style="flex:1;min-width:0">
+                    <div class="bb-sidebar__user-name truncate" id="adminName">Chargement...</div>
+                    <div class="bb-sidebar__user-role" id="adminRole">Admin</div>
+                </div>
+                <button onclick="confirmLogout()" class="bb-icon-btn"><span
+                        class="material-symbols-outlined">logout</span></button>
+            </div>
+        </div>
+    </aside>
+
+    <div class="bb-main">
+        <header class="bb-topbar">
+            <div style="display:flex;align-items:center;gap:1rem">
+                <button class="bb-hamburger bb-icon-btn" onclick="toggleSidebar()"><span
+                        class="material-symbols-outlined">menu</span></button>
+                <h1 class="bb-topbar__title">Gestion des Utilisateurs</h1>
+            </div>
+            <div class="bb-topbar__actions">
+                <a href="admin-dashboard.html" class="bb-btn bb-btn-ghost bb-btn-sm" style="gap: 0.4rem;">
+                    <span class="material-symbols-outlined" style="font-size: 1.1rem">arrow_back</span>
+                    Dashboard
+                </a>
+                <button class="bb-icon-btn"><span class="material-symbols-outlined">notifications_active</span></button>
+            </div>
+        </header>
+
+        <div class="bb-main-content">
+            <div class="bb-card">
+                <div class="bb-toolbar" style="margin-bottom:1.5rem">
+                    <h3 style="font-weight:700">Liste des Comptes</h3>
+                    <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+                        <input class="bb-input" placeholder="Rechercher..." style="width:250px" />
+                        <button class="bb-btn bb-btn-gold">Filtrer</button>
+                    </div>
+                </div>
+                <div class="bb-table-wrap">
+                    <table class="bb-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nom</th>
+                                <th>Email</th>
+                                <th>Rôle</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr>
+                                <td colspan="5" style="text-align:center;padding:2rem">Chargement des
+                                    utilisateurs...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="bb-toast"></div>
+    <script src="../assets/app.js"></script>
+    <script>
+        async function initUsers() {
+            const token = sessionStorage.getItem('bb_token');
+            if (!token) { window.location.href = '../connexion.html'; return; }
+            try {
+                const res = await fetch('/api/user/profile', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) throw new Error();
+                const user = await res.json();
+                document.getElementById('adminName').textContent = user.username || 'Admin';
+                document.getElementById('adminRole').textContent = user.role || 'Admin';
+                if (user.avatar) {
+                    const avatar = document.getElementById('adminAvatar');
+                    avatar.innerHTML = `<img src="${user.avatar}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%" />`;
+                    avatar.style.border = "none";
+                } else {
+                    document.getElementById('adminAvatar').textContent = (user.username || 'A')[0].toUpperCase();
+                }
+
+                // Récupérer la liste réelle des utilisateurs
+                const tableBody = document.getElementById('usersTableBody');
+                const usersRes = await fetch('/api/admin/utilisateurs', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (usersRes.ok) {
+                    const users = await usersRes.json();
+                    if (users.length === 0) {
+                        tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem">Aucun utilisateur trouvé.</td></tr>';
+                    } else {
+                        tableBody.innerHTML = users.map(u => `
+                            <tr>
+                                <td>${u.id}</td>
+                                <td>${u.fullName || u.username}</td>
+                                <td>${u.email}</td>
+                                <td><span class="bb-badge bb-role-badge role-${(u.role || 'user').toLowerCase()}">${u.role}</span></td>
+                                <td>
+                                    <button class="bb-btn bb-btn-outline bb-btn-sm" onclick="Toast.show('Détails de ${u.username}', 'info')">
+                                        <span class="material-symbols-outlined" style="font-size:1rem;vertical-align:middle">visibility</span>
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('');
+                    }
+                } else {
+                    tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--bb-error)">Erreur lors du chargement des données.</td></tr>';
+                }
+            } catch (err) {
+                console.error("Erreur d'initialisation:", err);
+                // Si l'erreur est liée au profil, on redirige
+                if (err.message !== 'API_FETCH_ERROR') {
+                    // sessionStorage.clear();
+                    // window.location.href = '../connexion.html';
+                }
+            }
+        }
+
+        function toggleSidebar() {
+            document.getElementById('mainSidebar').classList.toggle('bb-sidebar--open');
+            document.getElementById('sidebarOverlay').classList.toggle('bb-sidebar-overlay--active');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initUsers();
+            if (window.updateNotificationBadge) updateNotificationBadge(3);
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>BarakahBrain — Superadmin1 · Centre de Commandement</title>
+    <link rel="icon" href="../assets/logo_BarakahBrain.png" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <style>
+        .s1-kpi {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        @media(max-width:1100px) {
+            .s1-kpi {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .arrival-num {
+            font-family: var(--font-mono);
+            font-size: .8125rem;
+            font-weight: 700;
+            color: var(--bb-text-muted);
+            width: 2.5rem;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        @media(max-width:768px) {
+            .s1-main-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .bb-stat-card {
+                padding: 1rem;
+            }
+
+            .bb-stat-card__value {
+                font-size: 1.5rem;
+            }
+
+            .bb-table th,
+            .bb-table td {
+                padding: .75rem .5rem;
+                font-size: .75rem;
+            }
+
+            .bb-main {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+            }
+
+            .bb-topbar {
+                padding: 1rem;
+            }
+        }
+
+        .bb-table-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+    </style>
+</head>
+
+<body style="background:var(--bb-bg)">
+
+    <!-- Sidebar Overlay -->
+    <div class="bb-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="bb-sidebar" id="mainSidebar">
+        <div class="bb-sidebar__brand">
+            <img src="../assets/logo_BarakahBrain.png" alt="BarakahBrain" />
+            <div class="bb-header__brand">
+                <span class="bb-header__name">BarakahBrain</span>
+            </div>
+        </div>
+        <nav class="bb-sidebar__nav">
+            <div class="bb-sidebar__section">Console d'administration</div>
+            <a href="admin-dashboard.html" class="bb-sidebar__link"><span
+                    class="material-symbols-outlined bb-sidebar__icon">dashboard</span>Tableau de bord Admin</a>
+            <a href="admin-utilisateurs.html" class="bb-sidebar__link"><span
+                    class="material-symbols-outlined bb-sidebar__icon">group</span>Gestion Utilisateurs</a>
+            <a href="admin-questions.html" class="bb-sidebar__link"><span
+                    class="material-symbols-outlined bb-sidebar__icon">quiz</span>Questions</a>
+            <div class="bb-sidebar__section" style="margin-top:.5rem">SuperAdmin 1 Exclusif</div>
+            <a href="superadmin1.html" class="bb-sidebar__link bb-sidebar__link--active"
+                style="background:rgba(212,175,55,.08)">
+                <span class="material-symbols-outlined bb-sidebar__icon"
+                    style="color:var(--bb-gold)">shield_person</span>
+                <span style="color:var(--bb-gold);font-weight:700">Centre de Commandement</span>
+            </a>
+            <a href="superadmin-stats.html" class="bb-sidebar__link"><span
+                    class="material-symbols-outlined bb-sidebar__icon">monitoring</span>Stats Globales</a>
+            <a href="admin-logs.html" class="bb-sidebar__link"><span
+                    class="material-symbols-outlined bb-sidebar__icon">history</span>Logs Complets</a>
+            <a href="admin-parametres.html" class="bb-sidebar__link"><span
+                    class="material-symbols-outlined bb-sidebar__icon">settings</span>Paramètres Globaux</a>
+        </nav>
+        <div class="bb-sidebar__footer">
+            <div class="bb-sidebar__user">
+                <div class="bb-avatar bb-avatar--sm"
+                    style="border-color:var(--bb-gold);background:linear-gradient(135deg,var(--bb-primary),#0a3312)">S1
+                </div>
+                <div style="flex:1;min-width:0">
+                    <div class="bb-sidebar__user-name truncate">superadmin1</div>
+                    <div class="bb-sidebar__user-role" style="font-size:.6875rem">⭐ Superadmin Niveau 1</div>
+                </div>
+                <button onclick="confirmLogout()" class="bb-icon-btn"><span class="material-symbols-outlined"
+                        style="font-size:1.1rem">logout</span></button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="bb-main">
+        <div class="bb-topbar"
+            style="background:linear-gradient(90deg,rgba(14,26,56,.98),rgba(6,12,26,.98));border-color:rgba(212,175,55,.2)">
+            <div style="display:flex;align-items:center;gap:1rem">
+                <button class="bb-hamburger bb-icon-btn" onclick="toggleSidebar()">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <div>
+                    <h1 class="bb-topbar__title" style="font-size:1.125rem">Centre de Commandement</h1>
+                    <div style="font-size:.6875rem;color:var(--bb-gold);font-weight:700;letter-spacing:.04em">
+                        SUPERADMIN1 EXCLUSIF</div>
+                </div>
+            </div>
+            <div class="bb-topbar__actions">
+                <div class="bb-search">
+                    <span class="bb-search__icon material-symbols-outlined">search</span>
+                    <input type="search" id="s1Search" placeholder="Rechercher dans la liste…"
+                        oninput="filterS1Users()" />
+                </div>
+                <div class="bb-lang-switch">
+                    <button class="lang-btn lang-btn--active" data-lang="fr">FR</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="ar">ع</button>
+                </div>
+                <a href="admin-dashboard.html" class="bb-btn bb-btn-ghost bb-btn-sm" style="gap: 0.4rem;">
+                    <span class="material-symbols-outlined" style="font-size: 1.1rem">arrow_back</span>
+                    Dashboard
+                </a>
+                <button class="bb-icon-btn" title="Notifications" id="notifBell">
+                    <span class="material-symbols-outlined">notifications_active</span>
+                </button>
+                <button class="bb-btn bb-btn-outline bb-btn-sm" onclick="showAddCategoryModal()">
+                    <span class="material-symbols-outlined" style="font-size:1rem">category</span>
+                    Nouvelle catégorie
+                </button>
+            </div>
+        </div>
+
+        <div class="bb-main-content">
+            <!-- Alert Banner -->
+            <div
+                style="background:linear-gradient(90deg,rgba(212,175,55,.08),rgba(212,175,55,.04));border:1px solid rgba(212,175,55,.25);border-radius:var(--bb-radius-lg);padding:1rem 1.25rem;display:flex;align-items:center;gap:.875rem;margin-bottom:2rem">
+                <span class="material-symbols-outlined"
+                    style="color:var(--bb-gold);font-size:1.5rem">shield_person</span>
+                <div style="flex:1"><span style="font-weight:700;font-size:.9375rem">Accès exclusif
+                        Superadmin1</span><span
+                        style="display:block;font-size:.8125rem;color:var(--bb-text-muted);margin-top:.125rem">Vous avez
+                        accès à la liste complète des participants dans leur ordre d'arrivée et aux outils de gestion
+                        des rôles.</span></div>
+                <span
+                    style="font-family:var(--font-mono);font-size:.75rem;color:var(--bb-gold);font-weight:700;background:rgba(212,175,55,.1);padding:.375rem .75rem;border-radius:var(--bb-radius-full)">NIVEAU
+                    MAX</span>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="s1-kpi">
+                <div class="bb-stat-card" style="border-color:rgba(212,175,55,.25)">
+                    <div class="bb-stat-card__icon" style="background:rgba(212,175,55,.1)"><span
+                            class="material-symbols-outlined text-gold">group</span></div>
+                    <div class="bb-stat-card__label">Total Inscrits</div>
+                    <div class="bb-stat-card__value text-gold" id="statTotalUsers">---</div>
+                    <div class="bb-stat-card__change bb-stat-card__change--up"><span class="material-symbols-outlined"
+                            style="font-size:.9rem">trending_up</span>Nouveaux</div>
+                </div>
+                <div class="bb-stat-card">
+                    <div class="bb-stat-card__icon" style="background:rgba(6,76,24,.15)"><span
+                            class="material-symbols-outlined" style="color:#5db87a">admin_panel_settings</span></div>
+                    <div class="bb-stat-card__label">Admins Actifs</div>
+                    <div class="bb-stat-card__value" style="color:#5db87a" id="statAdmins">---</div>
+                    <div style="font-size:.8125rem;color:var(--bb-text-muted);margin-top:.25rem">Équipe de gestion
+                    </div>
+                </div>
+                <div class="bb-stat-card">
+                    <div class="bb-stat-card__icon" style="background:rgba(239,68,68,.08)"><span
+                            class="material-symbols-outlined" style="color:#f87171">security</span></div>
+                    <div class="bb-stat-card__label">Incidents</div>
+                    <div class="bb-stat-card__value text-danger" id="statIncidents">---</div>
+                    <div style="font-size:.8125rem;color:var(--bb-warning);margin-top:.25rem">Signalements système</div>
+                </div>
+                <div class="bb-stat-card">
+                    <div class="bb-stat-card__icon" style="background:rgba(59,130,246,.08)"><span
+                            class="material-symbols-outlined" style="color:#93c5fd">emoji_events</span></div>
+                    <div class="bb-stat-card__label">Session Active</div>
+                    <div class="bb-stat-card__value" style="color:#93c5fd" id="statSession">#04</div>
+                    <div
+                        style="display:flex;align-items:center;gap:.35rem;margin-top:.25rem;font-size:.8125rem;color:var(--bb-success)">
+                        <div style="width:.4rem;height:.4rem;border-radius:50%;background:var(--bb-success)"></div>En
+                        cours
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Grid -->
+            <div class="s1-main-grid"
+                style="display:grid;grid-template-columns:1.4fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
+
+                <!-- FULL USER LIST BY ARRIVAL ORDER -->
+                <div class="bb-card" style="padding:0;overflow:hidden">
+                    <div
+                        style="padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bb-border);background:rgba(212,175,55,.04)">
+                        <div>
+                            <h3 style="font-weight:700;font-size:.9375rem;display:flex;align-items:center;gap:.5rem">
+                                <span class="material-symbols-outlined text-gold"
+                                    style="font-size:1.1rem">format_list_numbered</span>
+                                Liste Complète — Ordre d'Arrivée
+                            </h3>
+                            <p style="font-size:.6875rem;color:var(--bb-text-subtle);margin-top:.125rem">Classement par
+                                date/heure d'inscription</p>
+                        </div>
+                        <div style="display:flex;gap:.75rem">
+                            <button class="bb-btn bb-btn-outline bb-btn-sm" onclick="exportS1Users()">
+                                <span class="material-symbols-outlined" style="font-size:1rem">download</span>Export
+                            </button>
+                            <button class="bb-btn bb-btn-gold bb-btn-sm" onclick="showAddUserModal()">
+                                <span class="material-symbols-outlined" style="font-size:1rem">person_add</span>Ajouter
+                            </button>
+                        </div>
+                    </div>
+                    <div class="bb-table-wrap">
+                        <table class="bb-table" id="s1Table">
+                            <thead>
+                                <tr>
+                                    <th style="width:3rem">#Arrivée</th>
+                                    <th>Participant</th>
+                                    <th class="hide-mobile">Rôle</th>
+                                    <th>Score</th>
+                                    <th class="hide-mobile">Inscrit le</th>
+                                    <th style="text-align:right">Gestion Rôle</th>
+                                </tr>
+                            </thead>
+                            <tbody id="s1TableBody">
+                                <!-- Users injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div
+                        style="padding:1rem 1.25rem;border-top:1px solid var(--bb-border);display:flex;align-items:center;justify-content:space-between">
+                        <span style="font-size:.8125rem;color:var(--bb-text-muted)">Affichage 1–5 sur 15 284</span>
+                        <div class="bb-pagination">
+                            <button class="bb-page-btn" disabled><span class="material-symbols-outlined"
+                                    style="font-size:1rem">chevron_left</span></button>
+                            <button class="bb-page-btn bb-page-btn--active">1</button>
+                            <button class="bb-page-btn">2</button>
+                            <span class="bb-page-btn">…</span>
+                            <button class="bb-page-btn">3057</button>
+                            <button class="bb-page-btn"><span class="material-symbols-outlined"
+                                    style="font-size:1rem">chevron_right</span></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div style="display:flex;flex-direction:column;gap:1.25rem">
+                    <!-- Admin Escalation -->
+                    <div class="bb-card" style="border-color:rgba(212,175,55,.2)">
+                        <h3
+                            style="font-weight:700;font-size:.875rem;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem">
+                            <span class="material-symbols-outlined text-gold"
+                                style="font-size:1.1rem">admin_panel_settings</span>
+                            Gestion Rapide
+                        </h3>
+                        <div id="quickRoleMgmt" style="display:flex;flex-direction:column;gap:.75rem">
+                            <!-- Quick actions injected here -->
+                        </div>
+                    </div>
+
+                    <!-- Platform Activity Log -->
+                    <div class="bb-card" style="flex:1">
+                        <h3
+                            style="font-weight:700;font-size:.875rem;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem">
+                            <span class="material-symbols-outlined text-gold" style="font-size:1.1rem">history</span>
+                            Activité Récente — Plateforme
+                        </h3>
+                        <div id="recentActivityList" style="display:flex;flex-direction:column;gap:.5rem">
+                            <!-- Logs injected here -->
+                        </div>
+                        <a href="admin-logs.html" class="bb-btn bb-btn-ghost bb-btn-full bb-btn-sm"
+                            style="margin-top:1rem">Voir tous les logs</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Winners Management -->
+            <div class="bb-card" id="winnersCaptureArea" style="padding:0;overflow:hidden;background:var(--bb-bg)">
+                <div class="bb-toolbar" style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--bb-border)">
+                    <h3
+                        style="font-weight:700;font-size:.9375rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
+                        <span class="material-symbols-outlined text-gold" style="font-size:1.1rem">emoji_events</span>
+                        Gagnants officiels — Session en cours
+                    </h3>
+                    <button onclick="shareWinners()" class="bb-btn bb-btn-gold bb-btn-sm">
+                        <span class="material-symbols-outlined" style="font-size:1rem">publish</span>Publier
+                        officiellement
+                    </button>
+                </div>
+                <div class="bb-table-wrap">
+                    <table class="bb-table">
+                        <thead>
+                            <tr>
+                                <th>Rang</th>
+                                <th>Gagnant</th>
+                                <th>Score</th>
+                                <th>Durée</th>
+                                <th>Vérification</th>
+                                <th style="text-align:right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="winnersTableBody">
+                            <!-- Winners injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="bb-card"
+                style="margin-top:2rem;border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.02)">
+                <h3
+                    style="font-weight:700;font-size:.9375rem;color:#f87171;display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
+                    <span class="material-symbols-outlined">warning</span>
+                    Zone de Danger — Administration Système
+                </h3>
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:1.5rem;flex-wrap:wrap">
+                    <div>
+                        <p style="font-weight:700;font-size:0.875rem;margin-bottom:0.25rem">Réinitialisation des données
+                            de test</p>
+                        <p style="font-size:0.8125rem;color:var(--bb-text-muted)">Supprime tous les utilisateurs (sauf
+                            Superadmin), les résultats de quiz et les journaux d'activité.</p>
+                    </div>
+                    <button class="bb-btn bb-btn-danger" onclick="resetSystemData()">
+                        <span class="material-symbols-outlined" style="font-size:1.1rem">delete_forever</span>
+                        Nettoyer la base de données
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="bb-toast"></div>
+    <script src="../assets/i18n.js"></script>
+    <script src="../assets/app.js"></script>
+    <script>
+        function filterS1Users() {
+            const q = document.getElementById('s1Search').value.toLowerCase();
+            document.querySelectorAll('#s1Table tbody tr').forEach(row => {
+                row.style.display = row.dataset.name.includes(q) || q === '' ? '' : 'none';
+            });
+        }
+
+        async function assignRole(uid, newRole) {
+            if (!newRole) return;
+            Modal.show({
+                title: 'Confirmer le changement de rôle',
+                body: `Attribuer le rôle <strong style="color:var(--bb-gold)">${newRole}</strong> à cet utilisateur&nbsp;?`,
+                confirmLabel: 'Confirmer',
+                onConfirm: async () => {
+                    const token = sessionStorage.getItem('bb_token');
+                    try {
+                        const res = await fetch(`/api/admin/users/${uid}/role`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ role: newRole })
+                        });
+                        if (res.ok) {
+                            Toast.show(`Rôle "${newRole}" mis à jour.`, 'success');
+                            initDashboard(); // Refresh
+                        } else {
+                            Toast.show('Erreur lors du changement de rôle.', 'error');
+                        }
+                    } catch (err) {
+                        Toast.show('Erreur de connexion.', 'error');
+                    }
+                },
+                cancelLabel: 'Annuler'
+            });
+        }
+
+        function upgradeToSuperadmin(uid, name) {
+            assignRole(uid, 'Superadmin1');
+        }
+
+        function exportS1Users() {
+            Toast.show('Préparation de l\'export CSV...', 'info');
+            const rows = document.querySelectorAll('#s1Table tbody tr');
+            let csv = "\uFEFF#;Participant;Email;Role;Score;Inscrit le\n"; // BOM for Excel
+            rows.forEach(row => {
+                const arrival = row.querySelector('.arrival-num').textContent;
+                const name = row.querySelector('div[style*="font-weight:700"]').textContent;
+                const email = row.querySelector('div[style*="font-size:.6875rem"]').textContent;
+                const role = row.querySelector('.bb-role-badge').textContent;
+                const score = row.querySelector('span[style*="font-family:var(--font-mono)"]').textContent.replace(/\s/g, '');
+                const date = row.cells[4].textContent;
+                csv += `${arrival};"${name}";${email};${role};${score};"${date}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `BarakahBrain_Participants_${new Date().toLocaleDateString()}.csv`;
+            link.click();
+            Toast.show('Export terminé !', 'success');
+        }
+
+        function showAddUserModal() {
+            const body = `
+                <div style="display:flex;flex-direction:column;gap:1rem">
+                    <div>
+                        <label class="bb-label">Prénom & Nom</label>
+                        <input class="bb-input" id="newFullName" placeholder="Ex: Omar M." />
+                    </div>
+                    <div>
+                        <label class="bb-label">Identifiant (Username)</label>
+                        <input class="bb-input" id="newUserName" placeholder="omar_dev" />
+                    </div>
+                    <div>
+                        <label class="bb-label">Email</label>
+                        <input class="bb-input" id="newUserEmail" placeholder="omar@example.com" />
+                    </div>
+                    <div>
+                        <label class="bb-label">Rôle Initial</label>
+                        <select class="bb-select" id="newUserRole">
+                            <option value="User">Utilisateur</option>
+                            <option value="Admin">Administrateur</option>
+                            <option value="Superadmin1">Superadmin</option>
+                        </select>
+                    </div>
+                    <p style="font-size:.75rem;color:var(--bb-text-subtle)">Mot de passe par défaut : <strong>ChangeMe123!</strong></p>
+                </div>
+            `;
+            Modal.show({
+                title: 'Ajouter un Utilisateur',
+                body: body,
+                confirmLabel: 'Créer le compte',
+                onConfirm: async () => {
+                    const fullName = document.getElementById('newFullName').value;
+                    const username = document.getElementById('newUserName').value;
+                    const email = document.getElementById('newUserEmail').value;
+                    const role = document.getElementById('newUserRole').value;
+                    if (!username || !email) return Toast.show('Veuillez remplir au moins l\'identifiant et l\'email.', 'error');
+
+                    const token = sessionStorage.getItem('bb_token');
+                    try {
+                        const res = await fetch('/api/admin/users', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ username, email, fullName, role })
+                        });
+                        const data = await res.json();
+                        if (res.ok) {
+                            Toast.show(`Compte ${username} créé.`, 'success');
+                            initDashboard();
+                        } else {
+                            Toast.show(data.message || 'Erreur création.', 'error');
+                        }
+                    } catch (e) {
+                        Toast.show('Erreur serveur.', 'error');
+                    }
+                }
+            });
+        }
+
+        function showAddCategoryModal() {
+            const body = `
+                <div style="display:flex;flex-direction:column;gap:1rem">
+                    <div>
+                        <label class="bb-label">Nom de la nouvelle catégorie</label>
+                        <input class="bb-input" id="newCategoryName" placeholder="Ex : Morale & Comportement" />
+                    </div>
+                    <p style="font-size:.8125rem;color:var(--bb-text-subtle);margin-top:.25rem">
+                        Cette catégorie sera immédiatement disponible pour le quiz et la gestion des questions.
+                    </p>
+                </div>
+            `;
+            Modal.show({
+                title: 'Ajouter une catégorie de quiz',
+                body: body,
+                confirmLabel: 'Ajouter',
+                onConfirm: async () => {
+                    const name = (document.getElementById('newCategoryName').value || '').trim();
+                    if (!name) {
+                        Toast.show('Veuillez saisir un nom de catégorie.', 'error');
+                        return;
+                    }
+                    const token = sessionStorage.getItem('bb_token');
+                    if (!token) {
+                        Toast.show('Session expirée. Veuillez vous reconnecter.', 'error');
+                        window.location.href = '../connexion.html';
+                        return;
+                    }
+                    try {
+                        const res = await fetch('/api/admin/categories', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ name })
+                        });
+                        const data = await res.json();
+                        if (!res.ok) {
+                            Toast.show(data.message || 'Erreur lors de la création de la catégorie.', 'error');
+                            return;
+                        }
+                        Toast.show('Catégorie ajoutée avec succès.', 'success');
+                    } catch (err) {
+                        Toast.show('Erreur de connexion au serveur.', 'error');
+                    }
+                }
+            });
+        }
+
+        function viewReport(uid) {
+            const isIncident = event.target.textContent.includes('incident');
+            const title = isIncident ? 'Rapport d\'incident — ' + uid : 'Détails du Participant — ' + uid;
+            const content = isIncident
+                ? '<div style="color:var(--bb-danger);font-weight:700;margin-bottom:.5rem">⚠️ Suspicion de triche détectée</div><p>L\'utilisateur a quitté l\'onglet 3 fois pendant la session. Score annulé par précaution.</p>'
+                : '<p>Performance stable. 90% de réussite. Temps moyen par question : 12s.</p>';
+
+            Modal.show({
+                title: title,
+                body: `<div class="bb-card" style="background:var(--bb-surface-2);border:none">${content}</div>`,
+                confirmLabel: 'Fermer',
+                onConfirm: null
+            });
+        }
+
+        async function shareWinners() {
+            const area = document.getElementById('winnersCaptureArea');
+            if (!area) return;
+
+            Toast.show('Génération de la capture...', 'info');
+
+            try {
+                const canvas = await html2canvas(area, {
+                    backgroundColor: '#060c1a',
+                    scale: 2,
+                    logging: false,
+                    useCORS: true
+                });
+
+                canvas.toBlob(async (blob) => {
+                    const file = new File([blob], 'BarakahBrain_Winners.png', { type: 'image/png' });
+
+                    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                        try {
+                            await navigator.share({
+                                files: [file],
+                                title: 'Gagnants BarakahBrain',
+                                text: 'Voici la liste officielle des gagnants de la session BarakahBrain !'
+                            });
+                            Toast.show('Partagé avec succès !', 'success');
+                        } catch (err) {
+                            if (err.name !== 'AbortError') Toast.show('Erreur de partage', 'error');
+                        }
+                    } else {
+                        // Fallback: Download
+                        const link = document.createElement('a');
+                        link.download = 'BarakahBrain_Winners.png';
+                        link.href = URL.createObjectURL(blob);
+                        link.click();
+                        Toast.show('Capture téléchargée (Partage non supporté)', 'info');
+                    }
+                }, 'image/png');
+
+            } catch (err) {
+                console.error(err);
+                Toast.show('Erreur lors de la capture', 'error');
+            }
+        }
+        function toggleSidebar() {
+            document.getElementById('mainSidebar').classList.toggle('bb-sidebar--active');
+            document.getElementById('sidebarOverlay').classList.toggle('bb-sidebar-overlay--active');
+        }
+        async function initDashboard() {
+            const token = sessionStorage.getItem('bb_token');
+            if (!token) {
+                window.location.href = '../connexion.html';
+                return;
+            }
+
+            // 1. KPIs
+            try {
+                const resStats = await fetch('/api/admin/stats', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const stats = await resStats.json();
+                document.getElementById('statTotalUsers').textContent = stats.totalUsers || 0;
+                document.getElementById('statAdmins').textContent = stats.adminsCount || 0;
+                document.getElementById('statIncidents').textContent = stats.incidentsCount || 0;
+                document.getElementById('statSession').textContent = stats.activeSession || '#04';
+            } catch (e) { console.error('Stats load error', e); }
+
+            // 2. User Table & Quick Role
+            try {
+                const resUsers = await fetch('/api/admin/users', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const users = await resUsers.json();
+                const tbody = document.getElementById('s1TableBody');
+                const quickDiv = document.getElementById('quickRoleMgmt');
+                tbody.innerHTML = '';
+                quickDiv.innerHTML = '';
+
+                users.forEach((u, index) => {
+                    const arrivalNum = String(index + 1).padStart(3, '0');
+                    const date = new Date(u.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+                    const row = `
+                        <tr data-arrival="${index + 1}" data-name="${(u.fullName || u.username).toLowerCase()}" data-role="${u.role.toLowerCase()}">
+                            <td><span class="arrival-num">${arrivalNum}</span></td>
+                            <td>
+                                <div style="display:flex;align-items:center;gap:.625rem">
+                                    <div class="bb-avatar bb-avatar--sm" style="background:var(--bb-primary)">${(u.fullName || u.username).charAt(0).toUpperCase()}</div>
+                                    <div>
+                                        <div style="font-weight:700;font-size:.8125rem">${u.fullName || u.username}</div>
+                                        <div style="font-size:.6875rem;color:var(--bb-text-subtle)">${u.email}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="bb-badge bb-role-badge role-${u.role.toLowerCase()} hide-mobile" data-uid="${u.id}">${u.role}</span></td>
+                            <td><span style="font-family:var(--font-mono);font-weight:700;font-size:.8125rem">---</span></td>
+                            <td class="hide-mobile" style="font-size:.75rem;color:var(--bb-text-subtle)">${date}</td>
+                            <td style="text-align:right">
+                                <select class="bb-select" style="width:auto;font-size:.75rem;padding:.3rem .5rem" onchange="assignRole('${u.id}',this.value)">
+                                    <option value="User" ${u.role === 'User' ? 'selected' : ''}>Utilisateur</option>
+                                    <option value="Admin" ${u.role === 'Admin' ? 'selected' : ''}>Admin</option>
+                                    <option value="Superadmin1" ${u.role === 'Superadmin1' ? 'selected' : ''}>Superadmin</option>
+                                    <option value="Blocked" ${u.role === 'Blocked' ? 'selected' : ''}>Bloquer</option>
+                                </select>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+
+                    // Quick Escalation (only for non-superadmins)
+                    if (u.role !== 'Superadmin1' && index < 10) {
+                        const quickRow = `
+                            <div class="bb-card" style="background:var(--bb-surface-2);padding:.875rem;border:none">
+                                <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap">
+                                    <div style="display:flex;align-items:center;gap:.625rem">
+                                        <div class="bb-avatar bb-avatar--sm">${(u.fullName || u.username).charAt(0).toUpperCase()}</div>
+                                        <div>
+                                            <div style="font-weight:700;font-size:.8125rem">${u.fullName || u.username}</div>
+                                            <span class="bb-badge bb-role-badge role-${u.role.toLowerCase()}" style="margin-top:.125rem">${u.role}</span>
+                                        </div>
+                                    </div>
+                                    <button class="bb-btn bb-btn-sm" style="background:rgba(212,175,55,.15);color:var(--bb-gold);border:1px solid rgba(212,175,55,.3)" 
+                                            onclick="upgradeToSuperadmin('${u.id}','${u.fullName || u.username}')">Promouvoir</button>
+                                </div>
+                            </div>
+                        `;
+                        quickDiv.innerHTML += quickRow;
+                    }
+                });
+            } catch (e) { console.error('Users load error', e); }
+
+            // 3. Activity Logs
+            try {
+                const resLogs = await fetch('/api/admin/logs', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const logs = await resLogs.json();
+                const logDiv = document.getElementById('recentActivityList');
+                logDiv.innerHTML = '';
+                logs.slice(0, 10).forEach(l => {
+                    const icon = l.type === 'auth' ? 'person_add' : (l.type === 'email' ? 'alternate_email' : 'history');
+                    const color = l.type === 'auth' ? '#93c5fd' : (l.type === 'email' ? '#10b981' : 'var(--bb-gold)');
+                    const item = `
+                        <div style="display:flex;align-items:flex-start;gap:.75rem;padding:.625rem 0;border-bottom:1px solid var(--bb-border)">
+                            <div style="width:1.75rem;height:1.75rem;background:rgba(212,175,55,.05);border-radius:var(--bb-radius-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                                <span class="material-symbols-outlined" style="color:${color};font-size:.9rem">${icon}</span>
+                            </div>
+                            <div style="flex:1">
+                                <div style="font-size:.8125rem;font-weight:600">${l.message}</div>
+                                <div style="font-size:.6875rem;color:var(--bb-text-subtle);margin-top:.125rem">${l.user} — ${new Date(l.date).toLocaleTimeString()}</div>
+                            </div>
+                        </div>
+                    `;
+                    logDiv.innerHTML += item;
+                });
+            } catch (e) { console.error('Logs load error', e); }
+
+            // 4. Winners
+            try {
+                const resWinners = await fetch('/api/admin/winners', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const winners = await resWinners.json();
+                const winnerTbody = document.getElementById('winnersTableBody');
+                winnerTbody.innerHTML = '';
+                winners.forEach((w, i) => {
+                    const rankClass = i === 0 ? 'bb-rank--1' : (i === 1 ? 'bb-rank--2' : 'bb-rank--n');
+                    const row = `
+                        <tr>
+                            <td><div class="bb-rank ${rankClass}">${i + 1}</div></td>
+                            <td>
+                                <div style="display:flex;align-items:center;gap:.75rem">
+                                    <div class="bb-avatar">${w.fullName.charAt(0)}</div><span style="font-weight:700">${w.fullName}</span>
+                                </div>
+                            </td>
+                            <td><span style="font-family:var(--font-mono);font-weight:800;color:var(--bb-gold)">${w.score}</span></td>
+                            <td class="hide-mobile" style="color:var(--bb-text-muted)">${Math.floor(w.temps_passe / 60)}m ${w.temps_passe % 60}s</td>
+                            <td class="hide-mobile"><span class="bb-badge bb-badge--green"><span class="material-symbols-outlined" style="font-size:.85rem">verified</span>Validé</span></td>
+                            <td style="text-align:right"><button class="bb-btn bb-btn-outline bb-btn-sm" onclick="viewReport('${w.id}')">Détails</button></td>
+                        </tr>
+                    `;
+                    winnerTbody.innerHTML += row;
+                });
+            } catch (e) { console.error('Winners load error', e); }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initDashboard();
+            if (window.updateNotificationBadge) {
+                updateNotificationBadge(3);
+            }
+        });
+    </script>
+</body>
+
+</html>

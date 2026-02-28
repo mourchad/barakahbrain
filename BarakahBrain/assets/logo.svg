@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <!-- Brain shape -->
+  <path d="M24 6C18 6 13 10 12 16c-2 0-4 1.5-4 4s2 4 4 4c0 4 2 7 5 9v3h14v-3c3-2 5-5 5-9 2 0 4-1.5 4-4s-2-4-4-4c-1-6-6-10-12-10z" fill="#064c18"/>
+  <!-- Brain fold lines -->
+  <path d="M20 18 Q24 22 28 18" stroke="#d4af37" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+  <path d="M18 24 Q24 28 30 24" stroke="#d4af37" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+  <!-- Crescent moon accent -->
+  <path d="M36 8 A6 6 0 1 1 36 20 A4 4 0 1 0 36 8 Z" fill="#d4af37" opacity="0.9"/>
+</svg>

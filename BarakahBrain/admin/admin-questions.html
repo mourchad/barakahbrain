@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>BarakahBrain Admin — Gestion des Questions</title>
+    <link rel="icon" href="../assets/logo_BarakahBrain.png" type="image/png" />
+    <link rel="stylesheet" href="../assets/styles.css" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
+</head>
+
+<body style="background:var(--bb-bg)">
+    <div class="bb-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <aside class="bb-sidebar" id="mainSidebar">
+        <div class="bb-sidebar__brand">
+            <img src="../assets/logo_BarakahBrain.png" alt="BarakahBrain" />
+            <div class="bb-header__brand">
+                <span class="bb-header__name">BarakahBrain</span>
+            </div>
+        </div>
+        <nav class="bb-sidebar__nav">
+            <div class="bb-sidebar__section">Général</div>
+            <a href="admin-dashboard.html" class="bb-sidebar__link"><span
+                    class="material-symbols-outlined bb-sidebar__icon">dashboard</span>Tableau de bord</a>
+            <a href="admin-utilisateurs.html" class="bb-sidebar__link"><span
+                    class="material-symbols-outlined bb-sidebar__icon">group</span>Utilisateurs</a>
+            <a href="admin-questions.html" class="bb-sidebar__link bb-sidebar__link--active"><span
+                    class="material-symbols-outlined bb-sidebar__icon">quiz</span>Questions</a>
+            <div class="bb-sidebar__section" style="margin-top:.5rem">Système</div>
+            <a href="admin-logs.html" class="bb-sidebar__link"><span
+                    class="material-symbols-outlined bb-sidebar__icon">history</span>Logs</a>
+            <a href="admin-parametres.html" class="bb-sidebar__link"><span
+                    class="material-symbols-outlined bb-sidebar__icon">settings</span>Paramètres</a>
+            <div class="bb-sidebar__section" style="margin-top:.5rem">Accès Élevé</div>
+            <a href="superadmin1.html" class="bb-sidebar__link">
+                <span class="material-symbols-outlined bb-sidebar__icon"
+                    style="color:var(--bb-gold)">shield_person</span>
+                <span style="color:var(--bb-gold);font-weight:700">Superadmin1</span>
+            </a>
+            <a href="superadmin-stats.html" class="bb-sidebar__link">
+                <span class="material-symbols-outlined bb-sidebar__icon">monitoring</span>Stats Globales
+            </a>
+        </nav>
+        <div class="bb-sidebar__footer">
+            <div class="bb-sidebar__user">
+                <div class="bb-avatar bb-avatar--sm" id="adminAvatar" style="border-color:var(--bb-gold)">?</div>
+                <div style="flex:1;min-width:0">
+                    <div class="bb-sidebar__user-name truncate" id="adminName">Chargement...</div>
+                    <div class="bb-sidebar__user-role" id="adminRole">Admin</div>
+                </div>
+                <button onclick="confirmLogout()" class="bb-icon-btn"><span class="material-symbols-outlined"
+                        style="font-size:1.1rem">logout</span></button>
+            </div>
+        </div>
+    </aside>
+
+    <div class="bb-main">
+        <div class="bb-topbar">
+            <div style="display:flex;align-items:center;gap:1rem">
+                <button class="bb-hamburger bb-icon-btn" onclick="toggleSidebar()">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <h1 class="bb-topbar__title">Gestion des Questions</h1>
+            </div>
+            <div class="bb-topbar__actions">
+                <div class="bb-search"><span class="bb-search__icon material-symbols-outlined">search</span><input
+                        type="search" id="qSearch" placeholder="Rechercher une question…" oninput="filterQ()" /></div>
+                <div class="bb-lang-switch">
+                    <button class="lang-btn lang-btn--active" data-lang="fr">FR</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="ar">ع</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bb-main-content">
+            <!-- Summary Stats -->
+            <div class="admin-grid admin-grid--stats" style="margin-bottom:2rem">
+                <div class="bb-stat-card">
+                    <div class="bb-stat-card__label">Total Questions</div>
+                    <div class="bb-stat-card__value text-gold" id="totalQuestions">--</div>
+                </div>
+                <div class="bb-stat-card">
+                    <div class="bb-stat-card__label">Publiées</div>
+                    <div class="bb-stat-card__value" style="color:#5db87a">980</div>
+                </div>
+                <div class="bb-stat-card">
+                    <div class="bb-stat-card__label">Brouillon</div>
+                    <div class="bb-stat-card__value" style="color:var(--bb-warning)">238</div>
+                </div>
+                <div class="bb-stat-card">
+                    <div class="bb-stat-card__label">Désactivées</div>
+                    <div class="bb-stat-card__value" style="color:var(--bb-danger)">30</div>
+                </div>
+            </div>
+
+            <!-- Toolbar -->
+            <div class="bb-toolbar bb-toolbar--questions" style="margin-bottom:1.25rem">
+                <div class="bb-toolbar__row" style="display:flex;flex-wrap:wrap;gap:.75rem">
+                    <select class="bb-select" style="width:auto">
+                        <option>Toutes les catégories</option>
+                        <option>Histoire Islamique</option>
+                        <option>Coran &amp; Hadith</option>
+                        <option>Sciences &amp; Civilisation</option>
+                        <option>Fiqh</option>
+                    </select>
+                    <select class="bb-select" style="width:auto">
+                        <option>Tous les niveaux</option>
+                        <option>Débutant</option>
+                        <option>Moyen</option>
+                        <option>Avancé</option>
+                    </select>
+                    <select class="bb-select" style="width:auto">
+                        <option>Tous statuts</option>
+                        <option>Publié</option>
+                        <option>Brouillon</option>
+                        <option>Désactivé</option>
+                    </select>
+                </div>
+                <div class="bb-toolbar__row" style="display:flex;flex-wrap:wrap;gap:.75rem">
+                    <button class="bb-btn bb-btn-outline bb-btn-sm"><span class="material-symbols-outlined"
+                            style="font-size:1rem">upload</span>Importer CSV</button>
+                    <button class="bb-btn bb-btn-primary bb-btn-sm" onclick="newQuestion()"><span
+                            class="material-symbols-outlined" style="font-size:1rem">add</span>Nouvelle
+                        Question</button>
+                </div>
+            </div>
+
+            <!-- Questions Table -->
+            <div class="bb-card" style="padding:0;overflow:hidden">
+                <div class="bb-table-wrap">
+                    <table class="bb-table" id="questionsTable">
+                        <thead>
+                            <tr>
+                                <th style="width:2.5rem"><input type="checkbox" class="bb-checkbox" /></th>
+                                <th>Question</th>
+                                <th class="hide-mobile">Catégorie</th>
+                                <th class="hide-mobile">Niveau</th>
+                                <th class="hide-mobile">Taux réussite</th>
+                                <th>Statut</th>
+                                <th style="text-align:right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="checkbox" class="bb-checkbox" /></td>
+                                <td style="max-width:24rem"><span style="font-weight:600;font-size:.875rem">Quelle
+                                        sourate est connue comme le « Cœur du Coran » ?</span></td>
+                                <td><span class="bb-badge bb-badge--green">Coran &amp; Hadith</span></td>
+                                <td><span class="bb-badge bb-badge--blue">Moyen</span></td>
+                                <td>
+                                    <div style="display:flex;align-items:center;gap:.625rem">
+                                        <div class="bb-progress" style="height:.35rem;width:4rem">
+                                            <div class="bb-progress__bar" style="width:82%"></div>
+                                        </div><span style="font-size:.75rem;color:var(--bb-text-muted)">82%</span>
+                                    </div>
+                                </td>
+                                <td><span class="bb-badge bb-badge--green">Publié</span></td>
+                                <td style="text-align:right">
+                                    <div style="display:flex;gap:.35rem;justify-content:flex-end"><button
+                                            class="bb-btn bb-btn-ghost bb-btn-sm" title="Éditer"><span
+                                                class="material-symbols-outlined"
+                                                style="font-size:1rem">edit</span></button><button
+                                            class="bb-btn bb-btn-danger bb-btn-sm" title="Supprimer"><span
+                                                class="material-symbols-outlined"
+                                                style="font-size:1rem">delete</span></button></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="bb-checkbox" /></td>
+                                <td style="max-width:24rem"><span style="font-weight:600;font-size:.875rem">Quel est le
+                                        premier calife de l'Islam ?</span></td>
+                                <td><span class="bb-badge bb-badge--gold">Histoire Islamique</span></td>
+                                <td><span class="bb-badge bb-badge--green"
+                                        style="background:rgba(16,185,129,.1);color:#34d399;border-color:rgba(16,185,129,.25)">Débutant</span>
+                                </td>
+                                <td>
+                                    <div style="display:flex;align-items:center;gap:.625rem">
+                                        <div class="bb-progress" style="height:.35rem;width:4rem">
+                                            <div class="bb-progress__bar" style="width:96%"></div>
+                                        </div><span style="font-size:.75rem;color:var(--bb-text-muted)">96%</span>
+                                    </div>
+                                </td>
+                                <td><span class="bb-badge bb-badge--green">Publié</span></td>
+                                <td style="text-align:right">
+                                    <div style="display:flex;gap:.35rem;justify-content:flex-end"><button
+                                            class="bb-btn bb-btn-ghost bb-btn-sm"><span
+                                                class="material-symbols-outlined"
+                                                style="font-size:1rem">edit</span></button><button
+                                            class="bb-btn bb-btn-danger bb-btn-sm"><span
+                                                class="material-symbols-outlined"
+                                                style="font-size:1rem">delete</span></button></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="bb-checkbox" /></td>
+                                <td style="max-width:24rem"><span style="font-weight:600;font-size:.875rem">Combien de
+                                        versets contient la Sourate Al-Baqarah ?</span></td>
+                                <td><span class="bb-badge bb-badge--green">Coran &amp; Hadith</span></td>
+                                <td><span class="bb-badge bb-badge--purple">Avancé</span></td>
+                                <td>
+                                    <div style="display:flex;align-items:center;gap:.625rem">
+                                        <div class="bb-progress" style="height:.35rem;width:4rem">
+                                            <div class="bb-progress__bar" style="width:48%"></div>
+                                        </div><span style="font-size:.75rem;color:var(--bb-text-muted)">48%</span>
+                                    </div>
+                                </td>
+                                <td><span class="bb-badge bb-badge--muted">Brouillon</span></td>
+                                <td style="text-align:right">
+                                    <div style="display:flex;gap:.35rem;justify-content:flex-end"><button
+                                            class="bb-btn bb-btn-ghost bb-btn-sm"><span
+                                                class="material-symbols-outlined"
+                                                style="font-size:1rem">edit</span></button><button
+                                            class="bb-btn bb-btn-danger bb-btn-sm"><span
+                                                class="material-symbols-outlined"
+                                                style="font-size:1rem">delete</span></button></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div
+                    style="padding:.875rem 1.25rem;border-top:1px solid var(--bb-border);display:flex;align-items:center;justify-content:space-between">
+                    <span style="font-size:.8125rem;color:var(--bb-text-muted)">3 sur 1 248</span>
+                    <div class="bb-pagination">
+                        <button class="bb-page-btn" disabled><span class="material-symbols-outlined"
+                                style="font-size:1rem">chevron_left</span></button>
+                        <button class="bb-page-btn bb-page-btn--active">1</button>
+                        <button class="bb-page-btn">2</button>
+                        <span class="bb-page-btn">…</span>
+                        <button class="bb-page-btn">63</button>
+                        <button class="bb-page-btn"><span class="material-symbols-outlined"
+                                style="font-size:1rem">chevron_right</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="bb-toast"></div>
+    <div id="bb-toast"></div>
+    <script src="../assets/i18n.js"></script>
+    <script src="../assets/app.js"></script>
+    <script>
+        let ALL_CATEGORIES = [];
+        let QUESTIONS = [];
+
+        async function initAdmin() {
+            const token = sessionStorage.getItem('bb_token');
+            if (!token) { window.location.href = '../connexion.html'; return; }
+
+            try {
+                const response = await fetch('/api/user/profile', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) throw new Error();
+                const user = await response.json();
+
+                if (user.role === 'User') { window.location.href = '../dashboard.html'; return; }
+
+                document.getElementById('adminName').textContent = user.fullName;
+                document.getElementById('adminRole').textContent = user.role;
+                document.getElementById('adminAvatar').textContent = user.fullName.charAt(0).toUpperCase();
+
+                await loadCategories();
+                await loadQuestions();
+
+            } catch (err) { window.location.href = '../connexion.html'; }
+        }
+
+        async function loadCategories() {
+            const token = sessionStorage.getItem('bb_token');
+            try {
+                const res = await fetch('/api/quiz/categories', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                ALL_CATEGORIES = await res.json();
+            } catch (err) { console.error('Erreur chargement catégories', err); }
+        }
+
+        async function loadQuestions() {
+            const token = sessionStorage.getItem('bb_token');
+            try {
+                const response = await fetch('/api/admin/questions', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                QUESTIONS = await response.json();
+
+                document.getElementById('totalQuestions').textContent = QUESTIONS.length;
+                renderQuestions(QUESTIONS);
+
+            } catch (err) { Toast.show('Erreur de chargement des questions', 'error'); }
+        }
+
+        function renderQuestions(data) {
+            const tbody = document.querySelector('#questionsTable tbody');
+            tbody.innerHTML = '';
+
+            data.forEach(q => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="checkbox" class="bb-checkbox" /></td>
+                    <td style="max-width:24rem"><span style="font-weight:600;font-size:.875rem">${q.question || 'N/A'}</span></td>
+                    <td class="hide-mobile"><span class="bb-badge bb-badge--green">${q.categoryName || 'Islam'}</span></td>
+                    <td class="hide-mobile"><span class="bb-badge bb-badge--blue">P${q.phase || 1} - L${q.difficulty || 1}</span></td>
+                    <td class="hide-mobile">
+                        <div style="display:flex;align-items:center;gap:.625rem">
+                            <div class="bb-progress" style="height:.35rem;width:4rem"><div class="bb-progress__bar" style="width:0%"></div></div>
+                            <span style="font-size:.75rem;color:var(--bb-text-muted)">0%</span>
+                        </div>
+                    </td>
+                    <td><span class="bb-badge bb-badge--green">Publié</span></td>
+                    <td style="text-align:right">
+                        <div style="display:flex;gap:.35rem;justify-content:flex-end">
+                            <button onclick="editQuestion(${q.id})" class="bb-btn bb-btn-ghost bb-btn-sm" title="Éditer"><span class="material-symbols-outlined" style="font-size:1rem">edit</span></button>
+                            <button onclick="deleteQuestion(${q.id})" class="bb-btn bb-btn-danger bb-btn-sm" title="Supprimer"><span class="material-symbols-outlined" style="font-size:1rem">delete</span></button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterQ() {
+            const query = document.getElementById('qSearch').value.toLowerCase();
+            const filtered = QUESTIONS.filter(q =>
+                (q.question && q.question.toLowerCase().includes(query)) ||
+                (q.categoryName && q.categoryName.toLowerCase().includes(query))
+            );
+            renderQuestions(filtered);
+        }
+
+        function newQuestion() {
+            const catOptions = ALL_CATEGORIES.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            Modal.show({
+                title: 'Nouvelle Question',
+                body: `
+                    <div style="display:flex;flex-direction:column;gap:1rem;margin-top:1rem">
+                        <textarea id="qText" class="bb-input" placeholder="Texte de la question" style="height:4rem"></textarea>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+                            <input id="optA" class="bb-input" placeholder="Option A" />
+                            <input id="optB" class="bb-input" placeholder="Option B" />
+                            <input id="optC" class="bb-input" placeholder="Option C" />
+                            <input id="optD" class="bb-input" placeholder="Option D" />
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+                            <select id="qCorrect" class="bb-select">
+                                <option value="0">Réponse Correcte: A</option>
+                                <option value="1">Réponse Correcte: B</option>
+                                <option value="2">Réponse Correcte: C</option>
+                                <option value="3">Réponse Correcte: D</option>
+                            </select>
+                            <select id="qCat" class="bb-select">
+                                ${catOptions}
+                            </select>
+                        </div>
+                            <input id="qDiff" type="number" class="bb-input" placeholder="Difficulté (1-3)" value="1" min="1" max="3" />
+                            <input id="qPhase" type="number" class="bb-input" placeholder="Phase (1-10)" value="1" min="1" max="10" />
+                        </div>
+                        <div>
+                            <label class="bb-label">Sagesse & Preuve (Verset/Hadith)</label>
+                            <textarea id="qExpl" class="bb-input" placeholder="L'explication ou la preuve textuelle..." style="height:4rem"></textarea>
+                        </div>
+                    </div>
+                `,
+                confirmLabel: 'Enregistrer',
+                onConfirm: async () => {
+                    const qBody = {
+                        question: document.getElementById('qText').value,
+                        options: [
+                            document.getElementById('optA').value,
+                            document.getElementById('optB').value,
+                            document.getElementById('optC').value,
+                            document.getElementById('optD').value
+                        ],
+                        correct: parseInt(document.getElementById('qCorrect').value),
+                        categoryId: parseInt(document.getElementById('qCat').value),
+                        difficulty: parseInt(document.getElementById('qDiff').value),
+                        phase: parseInt(document.getElementById('qPhase').value),
+                        explanation: document.getElementById('qExpl').value
+                    };
+
+                    const token = sessionStorage.getItem('bb_token');
+                    try {
+                        const response = await fetch('/api/admin/questions', {
+                            method: 'POST',
+                            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                            body: JSON.stringify(qBody)
+                        });
+                        if (response.ok) {
+                            Toast.show('Question ajoutée !', 'success');
+                            loadQuestions();
+                        }
+                    } catch (err) { Toast.show('Erreur ajout', 'error'); }
+                }
+            });
+        }
+
+        async function editQuestion(id) {
+            const q = QUESTIONS.find(item => item.id === id);
+            if (!q) return;
+
+            const catOptions = ALL_CATEGORIES.map(c => `<option value="${c.id}" ${c.id === q.categoryId ? 'selected' : ''}>${c.name}</option>`).join('');
+
+            Modal.show({
+                title: 'Modifier la Question',
+                body: `
+                    <div style="display:flex;flex-direction:column;gap:1rem;margin-top:1rem">
+                        <textarea id="edit_qText" class="bb-input" placeholder="Texte de la question" style="height:4rem">${q.question}</textarea>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+                            <input id="edit_optA" class="bb-input" placeholder="Option A" value="${q.options[0] || ''}" />
+                            <input id="edit_optB" class="bb-input" placeholder="Option B" value="${q.options[1] || ''}" />
+                            <input id="edit_optC" class="bb-input" placeholder="Option C" value="${q.options[2] || ''}" />
+                            <input id="edit_optD" class="bb-input" placeholder="Option D" value="${q.options[3] || ''}" />
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+                            <select id="edit_qCorrect" class="bb-select">
+                                <option value="0" ${q.correct === 0 ? 'selected' : ''}>Réponse Correcte: A</option>
+                                <option value="1" ${q.correct === 1 ? 'selected' : ''}>Réponse Correcte: B</option>
+                                <option value="2" ${q.correct === 2 ? 'selected' : ''}>Réponse Correcte: C</option>
+                                <option value="3" ${q.correct === 3 ? 'selected' : ''}>Réponse Correcte: D</option>
+                            </select>
+                            <select id="edit_qCat" class="bb-select">
+                                ${catOptions}
+                            </select>
+                        </div>
+                            <input id="edit_qPhase" type="number" class="bb-input" placeholder="Phase (1-10)" value="${q.phase}" min="1" max="10" />
+                        </div>
+                        <div>
+                            <label class="bb-label">Sagesse & Preuve (Verset/Hadith)</label>
+                            <textarea id="edit_qExpl" class="bb-input" placeholder="L'explication ou la preuve textuelle..." style="height:4rem">${q.explanation || ''}</textarea>
+                        </div>
+                    </div>
+                `,
+                confirmLabel: 'Mettre à jour',
+                onConfirm: async () => {
+                    const qBody = {
+                        question: document.getElementById('edit_qText').value,
+                        options: [
+                            document.getElementById('edit_optA').value,
+                            document.getElementById('edit_optB').value,
+                            document.getElementById('edit_optC').value,
+                            document.getElementById('edit_optD').value
+                        ],
+                        correct: parseInt(document.getElementById('edit_qCorrect').value),
+                        categoryId: parseInt(document.getElementById('edit_qCat').value),
+                        difficulty: parseInt(document.getElementById('edit_qDiff').value),
+                        phase: parseInt(document.getElementById('edit_qPhase').value),
+                        explanation: document.getElementById('edit_qExpl').value
+                    };
+
+                    const token = sessionStorage.getItem('bb_token');
+                    try {
+                        const response = await fetch(`/api/admin/questions/${id}`, {
+                            method: 'PATCH',
+                            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                            body: JSON.stringify(qBody)
+                        });
+                        if (response.ok) {
+                            Toast.show('Question mise à jour !', 'success');
+                            loadQuestions();
+                        }
+                    } catch (err) { Toast.show('Erreur mise à jour', 'error'); }
+                }
+            });
+        }
+
+        async function deleteQuestion(id) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer cette question ?')) return;
+
+            const token = sessionStorage.getItem('bb_token');
+            try {
+                const response = await fetch(`/api/admin/questions/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (response.ok) {
+                    Toast.show('Question supprimée', 'success');
+                    loadQuestions();
+                }
+            } catch (err) { Toast.show('Erreur suppression', 'error'); }
+        }
+
+        function confirmLogout() {
+            if (confirm('Voulez-vous vraiment vous déconnecter ?')) {
+                sessionStorage.clear();
+                window.location.href = '../connexion.html';
+            }
+        }
+
+        function toggleSidebar() {
+            document.getElementById('mainSidebar').classList.toggle('bb-sidebar--active');
+            document.getElementById('sidebarOverlay').classList.toggle('bb-sidebar-overlay--active');
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            initAdmin();
+            if (window.updateNotificationBadge) updateNotificationBadge(3);
+        });
+    </script>
+</body>
+
+</html>

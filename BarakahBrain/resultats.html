@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>BarakahBrain — Résultats</title>
+    <link rel="icon" href="assets/logo_BarakahBrain.png" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/styles.css" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .score-ring {
+            width: 10rem;
+            height: 10rem;
+            border-radius: 50%;
+            background: conic-gradient(var(--bb-gold) calc(var(--score)*1%), var(--bb-surface-2) 0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            box-shadow: 0 0 0 4px var(--bb-surface), 0 0 0 5px var(--bb-gold-glow);
+        }
+
+        .score-inner {
+            width: 8rem;
+            height: 8rem;
+            border-radius: 50%;
+            background: var(--bb-surface);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .answer-item {
+            display: grid;
+            grid-template-columns: 2rem 1fr auto;
+            gap: .875rem;
+            align-items: center;
+            padding: .875rem 1rem;
+            border-radius: var(--bb-radius);
+        }
+
+        .answer-item--correct {
+            background: rgba(16, 185, 129, .08);
+            border: 1px solid rgba(16, 185, 129, .2);
+        }
+
+        .answer-item--wrong {
+            background: rgba(239, 68, 68, .08);
+            border: 1px solid rgba(239, 68, 68, .2);
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 1rem 0.75rem;
+            }
+
+            .bb-card.bb-card--gold {
+                padding: 1.5rem 1rem !important;
+            }
+
+            .answer-item {
+                grid-template-columns: 1.5rem 1fr auto;
+                gap: 0.5rem;
+                padding: 0.75rem;
+            }
+        }
+    </style>
+</head>
+
+<body style="background:var(--bb-bg)">
+    <div style="width:100%;max-width:36rem" class="animate-scale-in">
+        <div style="display: flex; justify-content: flex-start; margin-bottom: 1rem;">
+            <a href="dashboard.html" class="bb-btn bb-btn-ghost bb-btn-sm"
+                style="gap: 0.4rem; color: var(--bb-text-muted)">
+                <span class="material-symbols-outlined" style="font-size: 1.1rem">arrow_back</span>
+                <span data-i18n="results_home">Retour au tableau de bord</span>
+            </a>
+        </div>
+
+        <!-- Score Card -->
+        <div class="bb-card bb-card--gold" style="text-align:center;padding:2.5rem;margin-bottom:1.25rem">
+            <h1 style="font-family:var(--font-display);font-size:1.875rem;font-weight:900;margin-bottom:2rem"
+                data-i18n="results_title">Résultats du Quiz</h1>
+
+            <!-- Ring -->
+            <div class="score-ring" id="scoreRing" style="--score:0">
+                <div class="score-inner">
+                    <span id="scorePercent"
+                        style="font-family:var(--font-mono);font-size:1.875rem;font-weight:900;color:var(--bb-gold)">0%</span>
+                    <span
+                        style="font-size:.6875rem;font-weight:700;color:var(--bb-text-subtle);margin-top:.125rem">SCORE</span>
+                </div>
+            </div>
+
+            <!-- Feedback -->
+            <div id="feedbackBox"
+                style="margin:1.5rem 0;padding:1rem;background:var(--bb-primary-light);border-radius:var(--bb-radius);border:1px solid rgba(6,76,24,.25)">
+                <span class="material-symbols-outlined text-gold" id="feedbackIcon"
+                    style="font-size:1.75rem;display:block;margin-bottom:.375rem">emoji_events</span>
+                <p id="feedbackTitle" style="font-weight:700;font-size:1.0625rem;margin-bottom:.25rem">Chargement...</p>
+                <p id="feedbackText" style="font-size:.8125rem;color:var(--bb-text-muted)"></p>
+            </div>
+
+            <!-- Stats Summary -->
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;margin-bottom:1.5rem">
+                <div style="text-align:center">
+                    <div id="statPoints"
+                        style="font-size:1.375rem;font-weight:800;color:var(--bb-gold);font-family:var(--font-display)">
+                        0/0</div>
+                    <div style="font-size:.6875rem;color:var(--bb-text-subtle);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-top:.2rem"
+                        data-i18n="results_correct">Bonnes réponses</div>
+                </div>
+                <div style="text-align:center">
+                    <div id="statTime"
+                        style="font-size:1.375rem;font-weight:800;color:#5db87a;font-family:var(--font-display)">00:00
+                    </div>
+                    <div style="font-size:.6875rem;color:var(--bb-text-subtle);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-top:.2rem"
+                        data-i18n="results_time">Temps utilisé</div>
+                </div>
+                <div style="text-align:center">
+                    <div id="statRank"
+                        style="font-size:1.375rem;font-weight:800;color:#c4b5fd;font-family:var(--font-display)">---
+                    </div>
+                    <div style="font-size:.6875rem;color:var(--bb-text-subtle);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-top:.2rem"
+                        data-i18n="results_rank_label">
+                        Rang Global</div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div style="display:flex;flex-direction:column;gap:.75rem">
+                <a href="quiz.html" class="bb-btn bb-btn-gold bb-btn-full" data-i18n="results_retry">Rejouer</a>
+                <button onclick="shareScore()" class="bb-btn bb-btn-outline bb-btn-full">
+                    <span class="material-symbols-outlined">share</span>
+                    <span data-i18n="results_share">Partager mon score</span>
+                </button>
+                <a href="dashboard.html" class="bb-btn bb-btn-ghost bb-btn-full" data-i18n="results_home">Retour au
+                    tableau de bord</a>
+            </div>
+        </div>
+
+        <!-- Answer Review -->
+        <div class="bb-card">
+            <h3 style="font-size:.9375rem;font-weight:700;margin-bottom:1rem" data-i18n="results_correction_title">
+                Correction détaillée</h3>
+            <div id="correctionList" style="display:flex;flex-direction:column;gap:.625rem">
+                <!-- Corrections injected here -->
+            </div>
+            <a href="classement.html"
+                style="display:block;text-align:center;margin-top:1.25rem;font-size:.8125rem;font-weight:700;color:var(--bb-gold)"
+                data-i18n="results_view_ranking">Voir
+                mon rang dans le classement →</a>
+        </div>
+    </div>
+
+    <div id="bb-toast"></div>
+    <script src="assets/i18n.js"></script>
+    <script src="assets/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const resultData = JSON.parse(sessionStorage.getItem('bb_last_result') || '{}');
+            if (!resultData.score && resultData.score !== 0) {
+                // Si pas de données, on redirige ou on affiche un message
+                // window.location.href = 'dashboard.html';
+                return;
+            }
+
+            // Calcul du pourcentage
+            const percent = Math.round((resultData.correctAnswers / resultData.totalQuestions) * 100) || 0;
+            document.getElementById('scoreRing').style.setProperty('--score', percent);
+            document.getElementById('scorePercent').textContent = percent + '%';
+            document.getElementById('statPoints').textContent = `${resultData.correctAnswers}/${resultData.totalQuestions}`;
+
+            // Temps formaté
+            const mins = Math.floor(resultData.temps_passe / 60);
+            const secs = resultData.temps_passe % 60;
+            document.getElementById('statTime').textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+            // Feedback dynamique
+            const feedbackBox = document.getElementById('feedbackBox');
+            const feedbackTitle = document.getElementById('feedbackTitle');
+            const feedbackText = document.getElementById('feedbackText');
+            const feedbackIcon = document.getElementById('feedbackIcon');
+
+            if (percent >= 80) {
+                feedbackTitle.textContent = I18n.t('feedback_excellent_title');
+                feedbackText.textContent = I18n.t('feedback_excellent_text');
+                feedbackIcon.textContent = "emoji_events";
+                feedbackBox.className = "bb-primary-light";
+            } else if (percent >= 50) {
+                feedbackTitle.textContent = I18n.t('feedback_good_title');
+                feedbackText.textContent = I18n.t('feedback_good_text');
+                feedbackIcon.textContent = "auto_awesome";
+            } else {
+                feedbackTitle.textContent = I18n.t('feedback_keep_learning_title');
+                feedbackText.textContent = I18n.t('feedback_keep_learning_text');
+                feedbackIcon.textContent = "scholarly";
+            }
+
+            // Correction détaillée
+            const correctionList = document.getElementById('correctionList');
+            if (resultData.corrections && resultData.corrections.length > 0) {
+                correctionList.innerHTML = '';
+                resultData.corrections.forEach(c => {
+                    const item = document.createElement('div');
+                    item.className = `answer-item ${c.isCorrect ? 'answer-item--correct' : 'answer-item--wrong'}`;
+                    item.innerHTML = `
+                        <div style="width:2rem;height:2rem;background:rgba(${c.isCorrect ? '16,185,129' : '239,68,68'},.2);border-radius:var(--bb-radius-sm);display:flex;align-items:center;justify-content:center">
+                            <span class="material-symbols-outlined" style="color:var(--bb-${c.isCorrect ? 'success' : 'danger'});font-size:1.1rem">${c.isCorrect ? 'check' : 'close'}</span>
+                        </div>
+                        <div>
+                            <div style="font-size:.8125rem;font-weight:600">${c.question}</div>
+                            <div style="font-size:.75rem;color:var(--bb-${c.isCorrect ? 'success' : 'danger'});margin-top:.125rem">
+                                ${c.isCorrect ? (c.userAnswer + ' ✓') : (I18n.t('results_answer_your') + c.userAnswer + I18n.t('results_answer_correct') + c.correctAnswer)}
+                            </div>
+                        </div>
+                        <span class="bb-badge bb-badge--${c.isCorrect ? 'green' : 'red'}">${c.isCorrect ? '+50' : '0'} pts</span>
+                    `;
+                    correctionList.appendChild(item);
+                });
+            } else {
+                correctionList.innerHTML = `<p style="font-size:.8125rem;color:var(--bb-text-muted);text-align:center">${I18n.t('results_no_corrections')}</p>`;
+            }
+        });
+
+        function shareScore() {
+            const resultData = JSON.parse(sessionStorage.getItem('bb_last_result') || '{}');
+            const percent = Math.round((resultData.correctAnswers / resultData.totalQuestions) * 100) || 0;
+            const text = `J'ai obtenu ${percent}% au quiz islamique BarakahBrain ! #BarakahBrain`;
+
+            if (navigator.share) {
+                navigator.share({ title: 'Mon score BarakahBrain', text: text, url: window.location.origin });
+            } else {
+                navigator.clipboard.writeText(text + " " + window.location.origin);
+                Toast.show(I18n.t('results_share_toast'), 'success');
+            }
+        }
+    </script>
+</body>
+
+</html>

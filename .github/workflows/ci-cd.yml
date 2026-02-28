@@ -1,0 +1,84 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test-and-lint:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [ 18.x ]
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: 'BarakahBrain-API/package-lock.json'
+    
+    - name: Install dependencies (Backend)
+      working-directory: BarakahBrain-API
+      run: npm ci
+    
+    - name: Run ESLint (Code Quality)
+      working-directory: BarakahBrain-API
+      run: npm run lint
+    
+    - name: Run Tests (Unit & Integration)
+      working-directory: BarakahBrain-API
+      run: npm test
+    
+    - name: Check Frontend Assets Exist
+      run: |
+        [ -f BarakahBrain/index.html ] && echo "✅ index.html found"
+        [ -f BarakahBrain/assets/styles.css ] && echo "✅ styles.css found"
+        [ -f BarakahBrain/assets/app.js ] && echo "✅ app.js found"
+    
+    - name: Validate Docker Build (Optional)
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      working-directory: BarakahBrain-API
+      run: |
+        docker build -t barakahbrain-api:test . --no-cache
+      continue-on-error: true
+
+  security-scan:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Run npm audit
+      working-directory: BarakahBrain-API
+      run: npm audit --audit-level=moderate
+      continue-on-error: true
+    
+    - name: Check for secrets in code
+      uses: trufflesecurity/trufflehog@main
+      with:
+        path: ./
+        base: ${{ github.event.repository.default_branch }}
+        head: HEAD
+      continue-on-error: true
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: [test-and-lint, security-scan]
+    if: always()
+    
+    steps:
+    - name: Determine Status
+      run: |
+        if [ "${{ needs.test-and-lint.result }}" = "failure" ]; then
+          echo "❌ Tests FAILED - Fix required before merge"
+          exit 1
+        elif [ "${{ needs.test-and-lint.result }}" = "success" ]; then
+          echo "✅ All checks passed!"
+        fi

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>BarakahBrain — Connexion</title>
+    <meta name="description" content="Connectez-vous à votre compte BarakahBrain." />
+    <link rel="icon" href="assets/logo_BarakahBrain.png" type="image/png" />
+    <link rel="stylesheet" href="assets/styles.css" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .auth-bg {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            background-image:
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l3 9 9 3-9 3-3 9-3-9-9-3 9-3L30 0zm0 40l3 9 9 3-9 3-3 9-3-9-9-3 9-3L30 40z' fill='%23d4af37' fill-opacity='0.04'/%3E%3C/svg%3E");
+        }
+
+        .auth-form-wrap {
+            width: 100%;
+            max-width: 28rem;
+            padding: 0 0.5rem;
+        }
+
+        .auth-form-card {
+            border-radius: var(--bb-radius-xl);
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @media (max-width: 480px) {
+            .auth-bg {
+                padding: 1rem 0.75rem;
+            }
+
+            .auth-form-wrap {
+                padding: 0 0.5rem;
+            }
+
+            .auth-form-card {
+                padding: 1.5rem 1.25rem;
+            }
+
+            .auth-trust-badges {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1rem !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="bb-bg-pattern">
+
+    <header id="bb-header-global"></header>
+
+    <div class="auth-bg">
+        <!-- Glow decorations -->
+        <div
+            style="position:fixed;bottom:-4rem;left:-4rem;width:20rem;height:20rem;background:radial-gradient(circle,rgba(6,76,24,.15),transparent 70%);pointer-events:none">
+        </div>
+        <div
+            style="position:fixed;top:-4rem;right:-4rem;width:16rem;height:16rem;background:radial-gradient(circle,rgba(212,175,55,.08),transparent 70%);pointer-events:none">
+        </div>
+
+        <div class="auth-form-wrap animate-scale-in">
+            <div style="margin-bottom: 1.5rem; display: flex; align-items: center;">
+                <a href="index.html" class="bb-btn bb-btn-ghost bb-btn-sm"
+                    style="gap: 0.4rem; color: var(--bb-text-muted)">
+                    <span class="material-symbols-outlined" style="font-size: 1.1rem">arrow_back</span>
+                    <span data-i18n="nav_back_to_site">Retour au site</span>
+                </a>
+            </div>
+
+            <div
+                style="position:absolute;top:-3rem;right:-3rem;width:8rem;height:8rem;background:var(--bb-gold-light);border-radius:50%;filter:blur(2rem);pointer-events:none">
+            </div>
+
+            <div style="text-align:center;margin-bottom:2rem">
+                <img src="assets/logo_BarakahBrain.png" alt="BarakahBrain"
+                    style="height:4rem;object-fit:contain;margin:0 auto .875rem;display:block" />
+                <h1 style="font-size:1.875rem;font-weight:900" data-i18n="login_title">Connexion</h1>
+                <p style="color:var(--bb-text-muted);font-size:.9rem;margin-top:.375rem" data-i18n="login_subtitle">
+                    Plateforme BarakahBrain Professionnelle</p>
+            </div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)" novalidate
+                style="display:flex;flex-direction:column;gap:1.25rem">
+                <div>
+                    <label class="bb-label" for="emailOrId">
+                        <span class="material-symbols-outlined"
+                            style="font-size:1rem;vertical-align:middle;margin-right:.3rem;color:var(--bb-gold)">mail</span>
+                        <span data-i18n="label_email_or_id">E-mail ou Identifiant</span>
+                    </label>
+                    <input class="bb-input" id="emailOrId" type="text" placeholder="votre@email.com" required
+                        autocomplete="username" />
+                </div>
+                <div>
+                    <label class="bb-label" for="password">
+                        <span class="material-symbols-outlined"
+                            style="font-size:1rem;vertical-align:middle;margin-right:.3rem;color:var(--bb-gold)">lock</span>
+                        <span data-i18n="label_password">Mot de passe</span>
+                    </label>
+                    <div class="bb-input-wrap">
+                        <input class="bb-input" id="password" type="password" placeholder="••••••••" required
+                            autocomplete="current-password" style="padding-right:3rem" />
+                        <button type="button" onclick="togglePwd()"
+                            style="position:absolute;right:.875rem;top:50%;transform:translateY(-50%);color:var(--bb-text-subtle)">
+                            <span class="material-symbols-outlined" id="pwdIcon">visibility</span>
+                        </button>
+                    </div>
+                    <div style="text-align:right;margin-top:.375rem">
+                        <a href="mot-de-passe-oublie.html" style="font-size:.8125rem;color:var(--bb-gold);opacity:.8"
+                            data-i18n="forgot_password">Mot de passe oublié ?</a>
+                    </div>
+                </div>
+                <button type="submit" class="bb-btn bb-btn-primary bb-btn-full"
+                    style="height:3.25rem;font-size:1rem;border:1px solid rgba(212,175,55,.2)">
+                    <span data-i18n="btn_login">Se connecter</span>
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+            </form>
+
+            
+            <hr class="bb-divider" />
+            --- Infos de connexion de démonstration (Ne pas utiliser en production) ---
+            <!-- <div
+                style="background:rgba(212,175,55,0.05);border:1px dashed rgba(212,175,55,0.3);border-radius:var(--bb-radius);padding:1rem;margin-bottom:1.5rem">
+                <p data-i18n="auth_demo_title"
+                    style="font-size:0.75rem;font-weight:700;color:var(--bb-gold);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.05em">
+                    Accès Démo / Staff :</p>
+                <ul
+                    style="font-size:0.8125rem;color:var(--bb-text-muted);list-style:none;padding:0;display:flex;flex-direction:column;gap:0.25rem">
+                    <li>• <strong data-i18n="auth_demo_superadmin">Superadmin</strong> : <code
+                            style="color:var(--bb-gold)">superadmin1</code></li>
+                    <li>• <strong data-i18n="auth_demo_admin">Admin</strong> : <code
+                            style="color:var(--bb-gold)">admin_marc</code></li>
+                    <li>• <strong data-i18n="auth_demo_password">Mot de passe</strong> : <code
+                            style="color:var(--bb-gold)">Pass123!</code></li>
+                </ul>
+            </div> -->
+           
+            --- Lien vers inscription -->   
+            <p style="text-align:center;font-size:.875rem;color:var(--bb-text-muted)">
+                <span data-i18n="no_account">Pas encore de compte ?</span>
+                <a href="inscription.html" style="color:var(--bb-gold);font-weight:700;margin-left:.25rem"
+                    data-i18n="register_free">S'inscrire gratuitement</a>
+            </p>
+        </div>
+
+        <!-- Trust badges -->
+        <div class="auth-trust-badges"
+            style="display:flex;justify-content:center;gap:2rem;margin-top:1.5rem;opacity:.5">
+            <div
+                style="display:flex;align-items:center;gap:.5rem;font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--bb-text-muted)">
+                <span class="material-symbols-outlined"
+                    style="color:var(--bb-gold);font-size:1.1rem">verified_user</span>
+                <span data-i18n="auth_secure">Sécurisé</span>
+            </div>
+            <div
+                style="display:flex;align-items:center;gap:.5rem;font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--bb-text-muted)">
+                <span class="material-symbols-outlined"
+                    style="color:var(--bb-gold);font-size:1.1rem">workspace_premium</span>
+                <span data-i18n="auth_certified">Certifié</span>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <footer id="bb-footer-global"></footer>
+
+    <div id="bb-toast"></div>
+    <script src="assets/i18n.js"></script>
+    <script src="assets/layouts.js"></script>
+    <script src="assets/app.js"></script>
+    <script>
+        // Rediriger si déjà connecté
+        if (sessionStorage.getItem('bb_token')) {
+            window.location.href = 'profil.html';
+        }
+
+        function togglePwd() {
+            const inp = document.getElementById('password');
+            const icon = document.getElementById('pwdIcon');
+            inp.type = inp.type === 'password' ? 'text' : 'password';
+            icon.textContent = inp.type === 'password' ? 'visibility' : 'visibility_off';
+        }
+        async function handleLogin(e) {
+            e.preventDefault();
+            const id = document.getElementById('emailOrId').value.trim();
+            const pwd = document.getElementById('password').value;
+            if (!id || !pwd) { Toast.show('Veuillez remplir tous les champs.', 'error'); return; }
+
+            Toast.show('Tentative de connexion...', 'info');
+
+            try {
+                // APPEL RÉEL VERS VOTRE NOUVEAU BACKEND
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: id, password: pwd })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Sauvegarde du Token et des infos utilisateur
+                    sessionStorage.setItem('bb_token', data.token);
+                    sessionStorage.setItem('bb_user', JSON.stringify(data.user));
+
+                    const role = data.user.role;
+                    let redirectUrl = 'profil.html';
+
+                    if (role === 'Superadmin1') redirectUrl = 'admin/superadmin1.html';
+                    else if (role === 'Admin') redirectUrl = 'admin/admin-dashboard.html';
+
+                    Toast.show(`Connecté en tant que ${role}`, 'success');
+                    setTimeout(() => window.location.href = redirectUrl, 1200);
+                } else {
+                    Toast.show(data.message || 'Identifiants invalides', 'error');
+                }
+            } catch (err) {
+                console.error('Erreur API:', err);
+                Toast.show('Erreur : Serveur backend injoignable (Est-il lancé ?)', 'error');
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>BarakahBrain Admin — Paramètres</title>
+    <link rel="icon" href="../assets/logo_BarakahBrain.png" type="image/svg+xml" />
+    <link rel="stylesheet" href="../assets/styles.css" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
+    <style>
+        .param-section {
+            background: var(--bb-surface);
+            border: 1px solid var(--bb-border);
+            border-radius: var(--bb-radius-lg);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .param-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--bb-border);
+            font-weight: 700;
+            font-size: .9375rem;
+            display: flex;
+            align-items: center;
+            gap: .625rem;
+        }
+
+        .param-body {
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .param-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .param-row label {
+            font-size: .875rem;
+            font-weight: 600;
+            flex: 1 1 14rem;
+        }
+
+        .param-sub {
+            font-size: .75rem;
+            font-weight: 400;
+            color: var(--bb-text-muted);
+            display: block;
+            margin-top: .125rem;
+        }
+
+        .bb-toggle {
+            position: relative;
+            width: 2.75rem;
+            height: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .bb-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        .bb-toggle__track {
+            position: absolute;
+            inset: 0;
+            background: var(--bb-surface-2);
+            border-radius: 1rem;
+            transition: background .2s;
+            border: 1px solid var(--bb-border);
+            cursor: pointer;
+        }
+
+        .bb-toggle input:checked+.bb-toggle__track {
+            background: var(--bb-primary);
+        }
+
+        .bb-toggle__thumb {
+            position: absolute;
+            top: .25rem;
+            left: .25rem;
+            width: 1rem;
+            height: 1rem;
+            background: #fff;
+            border-radius: 50%;
+            transition: transform .2s;
+            pointer-events: none;
+        }
+
+        .bb-toggle input:checked~.bb-toggle__thumb {
+            transform: translateX(1.25rem);
+        }
+    </style>
+</head>
+
+<body style="background:var(--bb-bg)">
+    <div class="bb-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <aside class="bb-sidebar" id="mainSidebar">
+        <div class="bb-sidebar__brand">
+            <img src="../assets/logo_BarakahBrain.png" alt="BarakahBrain" />
+            <div class="bb-header__brand">
+                <span class="bb-header__name">BarakahBrain</span>
+            </div>
+        </div>
+        <nav class="bb-sidebar__nav">
+            <div class="bb-sidebar__section">Général</div>
+            <a href="admin-dashboard.html" class="bb-sidebar__link"><span
+                    class="material-symbols-outlined bb-sidebar__icon">dashboard</span>Tableau de bord</a>
+            <a href="admin-utilisateurs.html" class="bb-sidebar__link"><span
+                    class="material-symbols-outlined bb-sidebar__icon">group</span>Utilisateurs</a>
+            <a href="admin-questions.html" class="bb-sidebar__link"><span
+                    class="material-symbols-outlined bb-sidebar__icon">quiz</span>Questions</a>
+            <div class="bb-sidebar__section" style="margin-top:.5rem">Système</div>
+            <a href="admin-logs.html" class="bb-sidebar__link"><span
+                    class="material-symbols-outlined bb-sidebar__icon">history</span>Logs</a>
+            <a href="admin-parametres.html" class="bb-sidebar__link bb-sidebar__link--active"><span
+                    class="material-symbols-outlined bb-sidebar__icon">settings</span>Paramètres</a>
+            <div class="bb-sidebar__section" style="margin-top:.5rem">Accès Élevé</div>
+            <a href="superadmin1.html" class="bb-sidebar__link">
+                <span class="material-symbols-outlined bb-sidebar__icon"
+                    style="color:var(--bb-gold)">shield_person</span>
+                <span style="color:var(--bb-gold);font-weight:700">Superadmin1</span>
+            </a>
+            <a href="superadmin-stats.html" class="bb-sidebar__link">
+                <span class="material-symbols-outlined bb-sidebar__icon">monitoring</span>Stats Globales
+            </a>
+        </nav>
+        <div class="bb-sidebar__footer">
+            <div class="bb-sidebar__user">
+                <div class="bb-avatar bb-avatar--sm" style="border-color:var(--bb-gold)">A</div>
+                <div style="flex:1;min-width:0">
+                    <div class="bb-sidebar__user-name truncate">Admin User</div>
+                    <div class="bb-sidebar__user-role">Administrateur</div>
+                </div>
+                <button onclick="confirmLogout()" class="bb-icon-btn"><span class="material-symbols-outlined"
+                        style="font-size:1.1rem">logout</span></button>
+            </div>
+        </div>
+    </aside>
+
+    <div class="bb-main">
+        <div class="bb-topbar">
+            <div style="display:flex;align-items:center;gap:1rem">
+                <button class="bb-hamburger bb-icon-btn" onclick="toggleSidebar()">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <h1 class="bb-topbar__title">Paramètres de la plateforme</h1>
+            </div>
+            <div class="bb-topbar__actions">
+                <div class="bb-lang-switch">
+                    <button class="lang-btn lang-btn--active" data-lang="fr">FR</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="ar">ع</button>
+                </div>
+                <button class="bb-btn bb-btn-primary bb-btn-sm" onclick="saveSettings()"><span
+                        class="material-symbols-outlined" style="font-size:1rem">save</span>Enregistrer</button>
+            </div>
+        </div>
+
+        <div class="bb-main-content" style="max-width:52rem">
+            <!-- General Settings -->
+            <div class="param-section">
+                <div class="param-header"><span class="material-symbols-outlined text-gold">tune</span>Général</div>
+                <div class="param-body">
+                    <div class="param-row">
+                        <label>Nom de la plateforme <span class="param-sub">Affiché sur toutes les pages</span></label>
+                        <input class="bb-input" id="platformName" style="max-width:20rem" />
+                    </div>
+                    <div class="param-row">
+                        <label>Email Responsable <span class="param-sub">Destinataire des alertes et messages
+                                contact</span></label>
+                        <input class="bb-input" id="responsibleEmail" type="email" style="max-width:20rem" />
+                    </div>
+                    <div class="param-row">
+                        <label>Langue par défaut <span class="param-sub">Langue initiale pour les nouveaux
+                                utilisateurs</span></label>
+                        <select class="bb-select" style="width:auto">
+                            <option selected>Français</option>
+                            <option>English</option>
+                            <option>العربية</option>
+                        </select>
+                    </div>
+                    <div class="param-row">
+                        <label>Mode maintenance <span class="param-sub">La plateforme devient inaccessible aux
+                                utilisateurs</span></label>
+                        <label class="bb-toggle"><input type="checkbox" />
+                            <div class="bb-toggle__track"></div>
+                            <div class="bb-toggle__thumb"></div>
+                        </label>
+                    </div>
+                    <div class="param-row">
+                        <label>Inscriptions ouvertes <span class="param-sub">Permettre aux nouveaux utilisateurs de
+                                s'inscrire</span></label>
+                        <label class="bb-toggle"><input type="checkbox" id="registrationOpen" />
+                            <div class="bb-toggle__track"></div>
+                            <div class="bb-toggle__thumb"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Settings -->
+            <div class="param-section">
+                <div class="param-header"><span class="material-symbols-outlined text-gold">quiz</span>Quiz</div>
+                <div class="param-body">
+                    <div class="param-row">
+                        <label>Durée par question (sec.) <span class="param-sub">Temps alloué pour chaque
+                                question</span></label>
+                        <input class="bb-input" type="number" value="60" min="10" max="300" style="width:6rem" />
+                    </div>
+                    <div class="param-row">
+                        <label>Nombre de questions par quiz <span class="param-sub">Questions sélectionnées
+                                aléatoirement</span></label>
+                        <input class="bb-input" type="number" value="20" min="5" max="100" style="width:6rem" />
+                    </div>
+                    <div class="param-row">
+                        <label>Points par bonne réponse <span class="param-sub">Valeur de base (hors
+                                bonus)</span></label>
+                        <input class="bb-input" type="number" value="50" min="1" style="width:6rem" />
+                    </div>
+                    <div class="param-row">
+                        <label>Afficher le classement après quiz <span class="param-sub">Montrer le rang du joueur à la
+                                fin</span></label>
+                        <label class="bb-toggle"><input type="checkbox" checked />
+                            <div class="bb-toggle__track"></div>
+                            <div class="bb-toggle__thumb"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Anti-Cheat Settings -->
+            <div class="param-section" style="border-color:rgba(239,68,68,.2)">
+                <div class="param-header"><span class="material-symbols-outlined"
+                        style="color:var(--bb-danger)">security</span>Anti-Triche</div>
+                <div class="param-body">
+                    <div class="param-row">
+                        <label>Activer la détection de changement d'onglet <span class="param-sub">Enregistre les
+                                incidents et peut disqualifier</span></label>
+                        <label class="bb-toggle"><input type="checkbox" checked />
+                            <div class="bb-toggle__track"></div>
+                            <div class="bb-toggle__thumb"></div>
+                        </label>
+                    </div>
+                    <div class="param-row">
+                        <label>Seuil de disqualification (incidents) <span class="param-sub">Nombre d'incidents avant
+                                disqualification auto</span></label>
+                        <input class="bb-input" type="number" value="3" min="1" max="10" style="width:6rem" />
+                    </div>
+                    <div class="param-row">
+                        <label>Enregistrer tous les incidents dans les logs <span class="param-sub">Conserve chaque
+                                incident même mineur</span></label>
+                        <label class="bb-toggle"><input type="checkbox" checked />
+                            <div class="bb-toggle__track"></div>
+                            <div class="bb-toggle__thumb"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="param-section" style="border-color:rgba(239,68,68,.3)">
+                <div class="param-header" style="color:var(--bb-danger)"><span class="material-symbols-outlined"
+                        style="color:var(--bb-danger)">warning</span>Zone de danger</div>
+                <div class="param-body">
+                    <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:center">
+                        <div>
+                            <div style="font-weight:600;font-size:.875rem">Réinitialiser tous les scores</div>
+                            <p style="font-size:.8125rem;color:var(--bb-text-muted);margin-top:.25rem">Efface tous les
+                                scores de la session actuelle.</p>
+                        </div>
+                        <button class="bb-btn bb-btn-danger bb-btn-sm"
+                            onclick="dangerAction('reset_scores')">Réinitialiser</button>
+                    </div>
+                    <hr class="bb-divider" />
+                    <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:center">
+                        <div>
+                            <div style="font-weight:600;font-size:.875rem">Vider les logs système</div>
+                            <p style="font-size:.8125rem;color:var(--bb-text-muted);margin-top:.25rem">Supprime
+                                définitivement tous les journaux système.</p>
+                        </div>
+                        <button class="bb-btn bb-btn-danger bb-btn-sm" onclick="dangerAction('clear_logs')">Vider les
+                            logs</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="bb-toast"></div>
+    <script src="../assets/i18n.js"></script>
+    <script src="../assets/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', loadSettings);
+
+        async function loadSettings() {
+            const token = sessionStorage.getItem('bb_token');
+            if (!token) { window.location.href = '../connexion.html'; return; }
+
+            try {
+                const res = await fetch('/api/admin/settings', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const settings = await res.json();
+
+                document.getElementById('platformName').value = settings.platformName || '';
+                document.getElementById('responsibleEmail').value = settings.responsibleEmail || '';
+                document.getElementById('registrationOpen').checked = settings.registrationOpen;
+                // Note: Other settings are mock/placeholders in this view for now
+            } catch (err) {
+                Toast.show('Erreur de chargement des paramètres', 'error');
+            }
+        }
+
+        async function saveSettings() {
+            const token = sessionStorage.getItem('bb_token');
+            const data = {
+                platformName: document.getElementById('platformName').value,
+                responsibleEmail: document.getElementById('responsibleEmail').value,
+                registrationOpen: document.getElementById('registrationOpen').checked
+            };
+
+            Confirm.ask(
+                'Enregistrer les paramètres',
+                'Voulez-vous enregistrer les modifications globales de la plateforme ?',
+                async () => {
+                    try {
+                        const res = await fetch('/api/admin/settings', {
+                            method: 'PATCH',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(data)
+                        });
+                        if (res.ok) {
+                            Toast.show('Paramètres enregistrés avec succès.', 'success');
+                        } else {
+                            const err = await res.json();
+                            Toast.show(err.message || 'Erreur lors de la sauvegarde', 'error');
+                        }
+                    } catch (err) {
+                        Toast.show('Erreur réseau lors de la sauvegarde', 'error');
+                    }
+                }
+            );
+        }
+
+        function dangerAction(type) {
+            const userRole = JSON.parse(atob(sessionStorage.getItem('bb_token').split('.')[1])).role;
+            if (userRole !== 'Superadmin1') {
+                Toast.show('Action réservée au Superadmin1', 'error');
+                return;
+            }
+
+            const labels = { reset_scores: 'réinitialiser tous les scores', clear_logs: 'vider les logs système' };
+            Confirm.ask(
+                'Action irréversible',
+                `Êtes-vous sûr de vouloir <strong>${labels[type]}</strong>&nbsp;? Cette action ne peut pas être annulée.`,
+                () => Toast.show(`Action "${type}" effectuée.`, 'error'),
+                true
+            );
+        }
+
+        function toggleSidebar() {
+            document.getElementById('mainSidebar').classList.toggle('bb-sidebar--active');
+            document.getElementById('sidebarOverlay').classList.toggle('bb-sidebar-overlay--active');
+        }
+    </script>
+</body>
+
+</html>

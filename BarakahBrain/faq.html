@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>BarakahBrain — FAQ</title>
+    <link rel="icon" href="assets/logo_BarakahBrain.png" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/styles.css" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
+    <style>
+        .faq-item {
+            border: 1px solid var(--bb-border);
+            border-radius: var(--bb-radius-lg);
+            overflow: hidden;
+            margin-bottom: .75rem;
+        }
+
+        .faq-trigger {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.125rem 1.25rem;
+            text-align: left;
+            font-weight: 700;
+            font-size: .9375rem;
+            background: var(--bb-surface);
+            transition: background var(--bb-transition);
+        }
+
+        .faq-trigger:hover {
+            background: var(--bb-surface-2);
+        }
+
+        .faq-body {
+            display: none;
+            padding: 1.125rem 1.25rem;
+            font-size: .9rem;
+            color: var(--bb-text-muted);
+            line-height: 1.7;
+            border-top: 1px solid var(--bb-border);
+            background: var(--bb-bg-2);
+        }
+
+        .faq-body p {
+            margin-bottom: .75rem;
+        }
+
+        .faq-body p:last-child {
+            margin-bottom: 0;
+        }
+
+        .faq-item.open .faq-body {
+            display: block;
+        }
+
+        .faq-item.open .faq-trigger {
+            background: var(--bb-surface-2);
+            color: var(--bb-gold);
+        }
+
+        .faq-icon {
+            transition: transform .25s;
+            flex-shrink: 0;
+        }
+
+        .faq-item.open .faq-icon {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+
+<body class="bb-bg-pattern">
+
+    <header id="bb-header-global" data-active="faq"></header>
+
+    <main style="max-width:48rem;margin:0 auto;padding:4rem 1.5rem">
+        <div style="text-align:center;margin-bottom:3rem">
+            <span class="bb-badge bb-badge--gold" style="display:inline-flex;margin-bottom:1rem"
+                data-i18n="faq_badge">Centre d'aide</span>
+            <h1 style="font-family:var(--font-display);font-size:2.5rem;font-weight:900;margin-bottom:.75rem"
+                data-i18n="faq_title">Questions fréquentes</h1>
+            <p style="color:var(--bb-text-muted);font-size:1.0625rem" data-i18n="faq_subtitle">Tout ce que vous devez
+                savoir sur BarakahBrain.</p>
+        </div>
+
+        <div style="margin-bottom:2.5rem">
+            <div
+                style="background:var(--bb-surface);border:1px solid var(--bb-border);border-radius:var(--bb-radius-lg);padding:.75rem 1rem;display:flex;align-items:center;gap:.75rem;margin-bottom:2rem">
+                <span class="material-symbols-outlined" style="color:var(--bb-text-subtle)">search</span>
+                <input style="background:none;border:none;flex:1;color:var(--bb-text);outline:none;font-size:.9375rem"
+                    placeholder="Rechercher dans la FAQ…" id="faqSearch" oninput="filterFaq()"
+                    data-i18n-placeholder="faq_search_placeholder" />
+            </div>
+
+            <!-- Participation & Inscription -->
+            <div class="faq-group">
+                <p style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--bb-gold);margin-bottom:1rem"
+                    data-i18n="faq_group_auth">Participation & Inscription</p>
+                <div class="faq-item">
+                    <button class="faq-trigger" onclick="toggleFaq(this)">
+                        <span data-i18n="faq_q1">Comment s'inscrire à BarakahBrain ?</span>
+                        <span class="material-symbols-outlined faq-icon">expand_more</span>
+                    </button>
+                    <div class="faq-body">
+                        <p data-i18n="faq_a1">Cliquez sur le bouton « S'inscrire » en haut à droite, remplissez le
+                            formulaire avec votre nom complet, adresse e-mail et un mot de passe sécurisé. Votre compte
+                            sera activé immédiatement.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" onclick="toggleFaq(this)">
+                        <span data-i18n="faq_q2">L'inscription est-elle gratuite ?</span>
+                        <span class="material-symbols-outlined faq-icon">expand_more</span>
+                    </button>
+                    <div class="faq-body">
+                        <p data-i18n="faq_a2">Oui, l'inscription et la participation aux quiz sont entièrement
+                            gratuites. Nous croyons au libre accès à la connaissance islamique pour tous.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" onclick="toggleFaq(this)">
+                        <span data-i18n="faq_q3">Puis-je m'inscrire avec plusieurs comptes ?</span>
+                        <span class="material-symbols-outlined faq-icon">expand_more</span>
+                    </button>
+                    <div class="faq-body">
+                        <p data-i18n="faq_a3">Non. Un seul compte par participant est autorisé. La création de plusieurs
+                            comptes est considérée comme une tentative de triche et entraîne une disqualification
+                            permanente. Notre système détecte les doublons automatiquement.</p>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="bb-divider" />
+
+            <!-- Anti-Triche -->
+            <div class="faq-group">
+                <p style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--bb-gold);margin-bottom:1rem"
+                    data-i18n="faq_group_anticheat">Système Anti-Triche</p>
+                <div class="faq-item">
+                    <button class="faq-trigger" onclick="toggleFaq(this)">
+                        <span data-i18n="faq_q4">Comment fonctionne le système anti-triche ?</span>
+                        <span class="material-symbols-outlined faq-icon">expand_more</span>
+                    </button>
+                    <div class="faq-body">
+                        <p data-i18n="faq_a4">Notre système surveille en temps réel : les changements d'onglet ou de
+                            fenêtre, la mise en arrière-plan de l'application, le délai de réponse anormalement rapide,
+                            et les patterns de réponse statistiquement suspects.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" onclick="toggleFaq(this)">
+                        <span data-i18n="faq_q5">Que se passe-t-il si je quitte la page accidentellement ?</span>
+                        <span class="material-symbols-outlined faq-icon">expand_more</span>
+                    </button>
+                    <div class="faq-body">
+                        <p data-i18n="faq_a5">Un premier incident est enregistré mais ne vous disqualifie pas
+                            automatiquement. Des incidents répétés lors d'une même session peuvent toutefois entraîner
+                            l'annulation de votre score.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" onclick="toggleFaq(this)">
+                        <span data-i18n="faq_q6">Le timer peut-il s'arrêter ?</span>
+                        <span class="material-symbols-outlined faq-icon">expand_more</span>
+                    </button>
+                    <div class="faq-body">
+                        <p data-i18n="faq_a6">Non. Le compte à rebours est strict (3 minutes par phase) et ne se met pas
+                            en pause. Assurez-vous d'être dans un environnement stable avant de commencer.</p>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="bb-divider" />
+
+            <!-- Scores & Phases -->
+            <div class="faq-group">
+                <p style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--bb-gold);margin-bottom:1rem"
+                    data-i18n="faq_group_scores">Scores & Phases</p>
+                <div class="faq-item">
+                    <button class="faq-trigger" onclick="toggleFaq(this)">
+                        <span data-i18n="faq_q7">How does the phase system work ?</span>
+                        <span class="material-symbols-outlined faq-icon">expand_more</span>
+                    </button>
+                    <div class="faq-body">
+                        <p data-i18n="faq_a7">Le quiz est divisé en 5 phases progressives. Chaque phase comporte 10
+                            questions et doit être complétée en moins de 3 minutes pour passer à la suivante.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" onclick="toggleFaq(this)">
+                        <span data-i18n="faq_q8">Comment est calculé mon score ?</span>
+                        <span class="material-symbols-outlined faq-icon">expand_more</span>
+                    </button>
+                    <div class="faq-body">
+                        <p data-i18n="faq_a8">Chaque bonne réponse rapporte 50 points. Vous gagnez également des points
+                            d'expérience pour débloquer de nouveaux badges dans votre profil.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-trigger" onclick="toggleFaq(this)">
+                        <span data-i18n="faq_q10">Quels sont les thèmes abordés ?</span>
+                        <span class="material-symbols-outlined faq-icon">expand_more</span>
+                    </button>
+                    <div class="faq-body">
+                        <p data-i18n="faq_a10">Le programme académique couvre le Tawhid (Unicité), la Sira (Vie du
+                            Prophète), le Fiqh (Purification) et le Hadith. Chaque catégorie propose des niveaux de
+                            difficulté croissants.</p>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="bb-divider" />
+
+            <!-- Sécurité & Compte -->
+            <div class="faq-group">
+                <p style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--bb-gold);margin-bottom:1rem"
+                    data-i18n="faq_group_security">Sécurité & Compte</p>
+                <div class="faq-item">
+                    <button class="faq-trigger" onclick="toggleFaq(this)">
+                        <span data-i18n="faq_q9">J'ai oublié mon mot de passe, que faire ?</span>
+                        <span class="material-symbols-outlined faq-icon">expand_more</span>
+                    </button>
+                    <div class="faq-body">
+                        <p data-i18n="faq_a9">Utilisez le lien « Mot de passe oublié » sur la page de connexion. Un code
+                            de récupération vous sera envoyé (ou affiché dans les logs en mode démo) pour réinitialiser
+                            votre accès.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="background:var(--bb-primary);border-radius:var(--bb-radius-xl);padding:2rem;text-align:center">
+            <h3 style="font-family:var(--font-display);font-size:1.25rem;font-weight:700;margin-bottom:.5rem"
+                data-i18n="faq_not_found">Vous n'avez pas trouvé votre réponse ?</h3>
+            <p style="color:rgba(255,255,255,.7);font-size:.9rem;margin-bottom:1.25rem" data-i18n="faq_support_text">
+                Notre équipe de support est disponible pour vous aider.</p>
+            <a href="contact.html" class="bb-btn bb-btn-gold">
+                <span class="material-symbols-outlined">support_agent</span><span data-i18n="faq_contact_btn">Contacter
+                    le support</span>
+            </a>
+        </div>
+    </main>
+
+    <footer id="bb-footer-global"></footer>
+
+    <div id="bb-toast"></div>
+    <script src="assets/i18n.js"></script>
+    <script src="assets/layouts.js"></script>
+    <script src="assets/app.js"></script>
+    <script>
+        function toggleFaq(btn) {
+            const item = btn.closest('.faq-item');
+            const isOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+            if (!isOpen) item.classList.add('open');
+        }
+        function filterFaq() {
+            const q = document.getElementById('faqSearch').value.toLowerCase();
+            document.querySelectorAll('.faq-item').forEach(item => {
+                item.style.display = item.textContent.toLowerCase().includes(q) ? '' : 'none';
+            });
+        }
+    </script>
+</body>
+
+</html>

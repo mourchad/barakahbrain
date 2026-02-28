@@ -1,0 +1,42 @@
+{
+  "name": "barakahbrain-api",
+  "version": "1.0.0",
+  "description": "Backend API for BarakahBrain Platform",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "migrate": "node migrate.js",
+    "test-smtp": "node test-smtp.js",
+    "lint": "eslint . --ext .js",
+    "test": "jest --detectOpenHandles --forceExit",
+      "build:js": "terser ../BarakahBrain/assets/app.js -o ../BarakahBrain/assets/app.min.js",
+      "build:js-layouts": "terser ../BarakahBrain/assets/layouts.js -o ../BarakahBrain/assets/layouts.min.js",
+      "build:js-i18n": "terser ../BarakahBrain/assets/i18n.js -o ../BarakahBrain/assets/i18n.min.js",
+      "build:css": "postcss ../BarakahBrain/assets/styles.css -o ../BarakahBrain/assets/styles.min.css",
+      "build:assets": "npm run build:js && npm run build:js-layouts && npm run build:js-i18n && npm run build:css",
+      "build:prod": "npm run lint && npm test && npm run build:assets"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^6.7.0",
+    "express-validator": "^7.0.1",
+    "helmet": "^7.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "nodemailer": "^6.9.4",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14",
+    "eslint": "^8.0.0",
+    "jest": "^29.0.0",
+    "supertest": "^6.3.0",
+    "terser": "^5.20.0",
+    "cssnano": "^6.0.0",
+    "postcss-cli": "^10.1.0"
+  }
+}

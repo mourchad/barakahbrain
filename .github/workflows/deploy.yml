@@ -1,0 +1,39 @@
+name: Deploy to Render
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'BarakahBrain-API/**'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+
+env:
+  RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Get HEAD commit info
+      id: commit
+      run: |
+        echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        echo "message=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
+    
+    - name: Trigger Render Deployment
+      if: env.RENDER_DEPLOY_HOOK != ''
+      run: |
+        curl -X POST $RENDER_DEPLOY_HOOK
+        echo "✅ Deployment triggered on Render (Commit: ${{ steps.commit.outputs.sha }})"
+      continue-on-error: true
+    
+    - name: Log deployment request
+      run: |
+        echo "Deployment requested for:"
+        echo "  Commit: ${{ steps.commit.outputs.sha }}"
+        echo "  Message: ${{ steps.commit.outputs.message }}"

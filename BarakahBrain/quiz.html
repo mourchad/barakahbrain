@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>BarakahBrain — Quiz en cours</title>
+    <link rel="icon" href="assets/logo_BarakahBrain.png" type="image/png" />
+    <link rel="stylesheet" href="assets/styles.css" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .quiz-layout {
+            display: grid;
+            grid-template-columns: 16rem 1fr;
+            gap: 2rem;
+            padding: 2rem;
+            flex: 1;
+            max-width: 72rem;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        @media (max-width: 900px) {
+            .quiz-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .quiz-sidebar {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .quiz-layout {
+                padding: 1rem;
+            }
+
+            #options-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            #question-card {
+                padding: 1.25rem 1rem !important;
+            }
+
+            #finish-screen {
+                padding: 2rem 1rem !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .quiz-page-header {
+                padding: 0.75rem 1rem;
+            }
+
+            #section-screen,
+            #phase-screen {
+                padding: 1.5rem 1rem;
+            }
+
+            .section-grid,
+            .phase-grid {
+                padding-left: 0;
+                padding-right: 0;
+            }
+
+            .bb-anticheat-banner {
+                padding: 0.5rem 0.75rem;
+                flex-wrap: wrap;
+            }
+
+            .bb-anticheat-text {
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quiz-footer {
+                padding: 0.75rem 1rem;
+            }
+
+            .quiz-footer-inner {
+                justify-content: center;
+                text-align: center;
+            }
+
+            .quiz-page-header {
+                padding: 0.5rem 0.75rem;
+            }
+
+            .quiz-header-inner {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .quiz-header-inner .bb-timer {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .quiz-header-inner>div:first-child {
+                min-width: 0;
+            }
+
+            .quiz-header-inner img {
+                height: 2rem;
+                width: auto;
+            }
+
+            #section-screen h1 {
+                font-size: 1.75rem !important;
+            }
+
+            #phase-screen h1 {
+                font-size: 1.5rem !important;
+            }
+        }
+
+        .q-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: .5rem;
+        }
+
+        .q-dot {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--bb-radius-sm);
+            font-size: .75rem;
+            font-weight: 800;
+            transition: all .15s;
+        }
+
+        .q-dot--todo {
+            background: var(--bb-surface-2);
+            color: var(--bb-text-subtle);
+        }
+
+        .q-dot--current {
+            background: var(--bb-gold);
+            color: #060c1a;
+            box-shadow: 0 0 0 2px var(--bb-gold-glow);
+        }
+
+        .q-dot--correct {
+            background: var(--bb-success);
+            color: #fff;
+        }
+
+        .q-dot--wrong {
+            background: var(--bb-danger);
+            color: #fff;
+        }
+
+        .q-dot--skipped {
+            background: var(--bb-warning);
+            color: #060c1a;
+        }
+
+        /* Smooth slide transition */
+        #question-card {
+            transition: opacity .28s ease, transform .28s ease;
+        }
+
+        #question-card.leaving {
+            opacity: 0;
+            transform: translateX(-2.5rem);
+            pointer-events: none;
+        }
+
+        #question-card.entering {
+            opacity: 0;
+            transform: translateX(2.5rem);
+            pointer-events: none;
+        }
+
+        /* Section Selection */
+        #section-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            padding: 2rem 1.5rem;
+            max-width: 60rem;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .section-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+            margin-top: 2.5rem;
+        }
+
+        .section-card {
+            background: var(--bb-surface);
+            border: 2px solid var(--bb-border);
+            border-radius: var(--bb-radius-xl);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--bb-transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--bb-gold);
+            box-shadow: var(--bb-shadow-gold);
+        }
+
+        .section-card__icon {
+            font-size: 3rem;
+            margin-bottom: 1.25rem;
+            display: block;
+        }
+
+        .section-card__title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: .5rem;
+        }
+
+        .section-card__desc {
+            font-size: .875rem;
+            color: var(--bb-text-muted);
+            line-height: 1.5;
+        }
+
+        /* Result flash on card */
+        .answer-result {
+            position: absolute;
+            inset: 0;
+            border-radius: var(--bb-radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 900;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .2s;
+            z-index: 10;
+        }
+
+        .answer-result.show {
+            opacity: 1;
+        }
+
+        .answer-result--correct {
+            background: rgba(16, 185, 129, .14);
+            color: var(--bb-success);
+        }
+
+        .answer-result--wrong {
+            background: rgba(239, 68, 68, .12);
+            color: var(--bb-danger);
+        }
+
+        #quiz-layout {
+            display: none;
+            /* Cache par défaut */
+        }
+
+        #finish-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        /* Phase Selection */
+        #phase-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            padding: 2rem 1.5rem;
+            max-width: 60rem;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .phase-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+            margin-top: 2rem;
+        }
+
+        .phase-card {
+            background: var(--bb-surface);
+            border: 1px solid var(--bb-border);
+            border-radius: var(--bb-radius-lg);
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .phase-card:hover:not(.phase-card--locked) {
+            border-color: var(--bb-gold);
+            transform: translateY(-4px);
+            background: var(--bb-surface-2);
+        }
+
+        .phase-card--locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .phase-card__lock {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            color: var(--bb-text-subtle);
+        }
+
+        .phase-card__number {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--bb-gold);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .phase-card__title {
+            font-weight: 800;
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .phase-card__desc {
+            font-size: 0.8125rem;
+            color: var(--bb-text-muted);
+        }
+
+        /* Category Selection */
+        #category-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            padding: 2rem 1.5rem;
+            max-width: 65rem;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+            gap: 1.25rem;
+            width: 100%;
+            margin-top: 2rem;
+        }
+
+        .category-card {
+            background: var(--bb-surface);
+            border: 1px solid var(--bb-border);
+            border-radius: var(--bb-radius-lg);
+            padding: 1.25rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .category-card:hover {
+            border-color: var(--bb-gold);
+            transform: translateY(-4px);
+            background: var(--bb-surface-2);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.1);
+        }
+
+        .category-card__name {
+            font-weight: 700;
+            font-size: 0.9375rem;
+            color: var(--bb-text);
+        }
+
+        .category-card__sub {
+            font-size: 0.75rem;
+            color: var(--bb-gold);
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body class="bb-quiz-page" style="background:var(--bb-bg)">
+
+    <!-- Anti-Cheat Banner -->
+    <div class="bb-anticheat-banner" id="bb-cheat-warning">
+        <span class="material-symbols-outlined">warning</span>
+        <p class="bb-anticheat-text" data-i18n="quiz_warning">ANTI-TRICHE ACTIF : Restez sur cette page. Quitter ou
+            changer d'onglet vous disqualifiera.</p>
+    </div>
+
+    <!-- Quiz Header -->
+    <header class="quiz-page-header"
+        style="background:var(--bb-surface);border-bottom:1px solid var(--bb-border);padding:.875rem 1.5rem">
+        <div class="quiz-header-inner"
+            style="max-width:72rem;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:1rem">
+            <div style="display:flex;align-items:center;gap:.75rem">
+                <img src="assets/logo_BarakahBrain.png" alt="BarakahBrain" />
+                <span
+                    style="font-family:var(--font-display);font-size:1.125rem;font-weight:800;color:var(--bb-gold)">BarakahBrain</span>
+            </div>
+            <div
+                style="display:flex;align-items:center;gap:.75rem;background:var(--bb-surface-2);padding:.5rem 1.25rem;border-radius:var(--bb-radius-full);border:1px solid var(--bb-border)">
+                <span class="material-symbols-outlined text-gold">timer</span>
+                <div id="bb-timer" class="bb-timer" data-seconds="180">03:00</div>
+                <span style="font-size:.8125rem;font-weight:700;color:var(--bb-text-muted)"
+                    data-i18n="quiz_remaining">Restant</span>
+            </div>
+            <button onclick="exitQuiz()" class="bb-btn bb-btn-danger bb-btn-sm">
+                <span class="material-symbols-outlined" style="font-size:1rem">exit_to_app</span>
+                <span data-i18n="quiz_exit">Quitter</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Section Selection Screen -->
+    <div id="section-screen">
+        <div style="text-align:center">
+            <h1 style="font-family:var(--font-display);font-size:2.5rem;font-weight:900;margin-bottom:1rem"
+                data-i18n="quiz_section_title">Choisissez
+                votre Section</h1>
+            <p style="color:var(--bb-text-muted);max-width:32rem;margin:0 auto" data-i18n="quiz_section_subtitle">
+                Sélectionnez une difficulté pour
+                commencer. Chaque section contient 5 phases progressives.</p>
+        </div>
+        <div class="section-grid" id="sections-container">
+            <!-- Dynamically populated -->
+            <div style="text-align:center;padding:3rem;grid-column:1/-1" data-i18n="quiz_loading_sections">Chargement
+                des sections...</div>
+        </div>
+    </div>
+
+    <!-- Category Selection Screen -->
+    <div id="category-screen">
+        <div style="text-align:center">
+            <button onclick="showSections()" class="bb-btn bb-btn-ghost bb-btn-sm" style="margin-bottom:1.5rem">
+                <span class="material-symbols-outlined" style="font-size:1.1rem">arrow_back</span>
+                <span data-i18n="quiz_back_to_sections">Retour aux sections</span>
+            </button>
+            <h1 style="font-family:var(--font-display);font-size:2.25rem;font-weight:900;margin-bottom:0.5rem"
+                data-i18n="quiz_category_title">
+                Choisissez une Catégorie</h1>
+            <p style="color:var(--bb-text-muted)" data-i18n="quiz_category_subtitle">Sélectionnez votre domaine d'étude
+                pour ce quiz.</p>
+        </div>
+        <div class="category-grid" id="categories-container">
+            <!-- Dynamically populated -->
+        </div>
+    </div>
+
+    <!-- Phase Selection Screen -->
+    <div id="phase-screen">
+        <div style="text-align:center">
+            <button onclick="showCategories()" class="bb-btn bb-btn-ghost bb-btn-sm" style="margin-bottom:1.5rem">
+                <span class="material-symbols-outlined" style="font-size:1.1rem">arrow_back</span>
+                <span data-i18n="quiz_back_to_categories">Retour aux catégories</span>
+            </button>
+            <h1 style="font-family:var(--font-display);font-size:2.25rem;font-weight:900;margin-bottom:0.5rem"
+                data-i18n="quiz_phase_title">
+                Progression par Phases</h1>
+            <p style="color:var(--bb-text-muted)" id="phase-subtitle" data-i18n="quiz_phase_subtitle">Sélectionnez une
+                phase pour continuer votre
+                ascension.</p>
+        </div>
+        <div class="phase-grid" id="phases-container">
+            <!-- Dynamically populated -->
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="quiz-layout" id="quiz-layout">
+        <!-- Sidebar -->
+        <aside class="quiz-sidebar">
+            <div class="bb-card" style="margin-bottom:1rem">
+                <h3 style="font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--bb-text-subtle);margin-bottom:1rem"
+                    data-i18n="quiz_progress">Progression</h3>
+                <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:.5rem">
+                    <span
+                        style="font-size:1.625rem;font-weight:900;font-family:var(--font-display);color:var(--bb-gold)">
+                        <span id="sidebar-cur">01</span><span
+                            style="color:var(--bb-text-subtle);font-size:1rem;font-weight:500;margin:0 .2rem">/</span><span
+                            id="sidebar-tot">20</span>
+                    </span>
+                    <span style="font-size:.8125rem;font-weight:700;color:var(--bb-success)"><span
+                            id="sidebar-pct">0</span>% <span data-i18n="quiz_done">Complété</span></span>
+                </div>
+                <div class="bb-progress" style="height:.5rem;margin-bottom:1.25rem">
+                    <div class="bb-progress__bar" id="main-progress" style="width:0%"></div>
+                </div>
+                <div class="q-grid" id="q-grid"></div>
+            </div>
+            <div class="bb-card" style="border-color:rgba(212,175,55,.2)">
+                <div
+                    style="display:flex;align-items:center;gap:.5rem;color:var(--bb-gold);font-weight:700;font-size:.8125rem;margin-bottom:.5rem">
+                    <span class="material-symbols-outlined" style="font-size:1.1rem">info</span>
+                    <span data-i18n="quiz_help">Besoin d'aide ?</span>
+                </div>
+                <p style="font-size:.75rem;color:var(--bb-text-muted);line-height:1.5" data-i18n="quiz_help_desc">En cas
+                    de problème technique, n'actualisez pas la page.</p>
+            </div>
+        </aside>
+
+        <!-- Question Area -->
+        <section style="display:flex;flex-direction:column;gap:1.5rem">
+            <div id="question-card" class="bb-card" style="padding:2rem 2.5rem;position:relative;overflow:hidden">
+                <div
+                    style="position:absolute;top:0;right:0;width:8rem;height:8rem;background:var(--bb-primary-light);border-radius:0 0 0 100%">
+                </div>
+                <!-- Result flash overlays -->
+                <div class="answer-result answer-result--correct" id="result-correct">✓ Bonne réponse !</div>
+                <div class="answer-result answer-result--wrong" id="result-wrong">✗ Mauvaise réponse</div>
+                <div style="position:relative">
+                    <span
+                        style="font-family:var(--font-display);font-size:1.125rem;font-weight:700;color:var(--bb-gold)">
+                        <span data-i18n="quiz_question">Question</span>
+                        <span id="q-number">01</span>/<span id="q-total">20</span>
+                    </span>
+                    <h2 id="question-text"
+                        style="font-family:var(--font-display);font-size:1.5rem;font-weight:700;margin:1rem 0 2rem;line-height:1.35;color:var(--bb-text)">
+                    </h2>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem" id="options-grid"></div>
+
+                    <!-- Explanation Card (Elite Proof) -->
+                    <div id="explanation-card" class="bb-card animate-fade-in"
+                        style="display:none;margin-top:2rem;padding:1.25rem;background:rgba(212,175,55,0.05);border:1px solid rgba(212,175,55,0.3);position:relative;overflow:hidden">
+                        <div
+                            style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;color:var(--bb-gold)">
+                            <span class="material-symbols-outlined" style="font-size:1.25rem">menu_book</span>
+                            <span
+                                style="font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em">Sagesse
+                                & Preuve</span>
+                        </div>
+                        <p id="explanation-text"
+                            style="font-size:0.9375rem;line-height:1.6;color:var(--bb-text);font-style:italic"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
+                <p style="font-size:.8125rem;color:var(--bb-text-muted)">
+                    <span class="material-symbols-outlined" style="font-size:1rem;vertical-align:middle">info</span>
+                    <span data-i18n="quiz_info_text">Chaque réponse (ou passage) fait disparaître la question.</span>
+                </p>
+                <div style="display:flex;gap:.75rem">
+                    <button class="bb-btn bb-btn-outline bb-btn-sm" onclick="skipQuestion()"
+                        data-i18n="quiz_skip">Passer →</button>
+                    <button class="bb-btn bb-btn-gold" id="validate-btn" onclick="validateAnswer()" disabled>
+                        <span data-i18n="quiz_validate">Valider</span>
+                        <span class="material-symbols-outlined">chevron_right</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Status Bar -->
+            <div
+                style="display:flex;align-items:center;justify-content:center;gap:2.5rem;color:var(--bb-text-subtle);font-size:.8125rem;font-weight:600;padding-top:.5rem;border-top:1px solid var(--bb-border)">
+                <div style="display:flex;align-items:center;gap:.5rem">
+                    <div
+                        style="width:.5rem;height:.5rem;border-radius:50%;background:var(--bb-success);animation:timer-pulse 2s ease-in-out infinite">
+                    </div>
+                    <span data-i18n="quiz_live">Connexion en direct stable</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:.5rem">
+                    <span class="material-symbols-outlined" style="font-size:1rem">lock</span>
+                    <span data-i18n="quiz_secure">Mode Navigateur Sécurisé Actif</span>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Finish Screen (shown after last question) -->
+    <div id="finish-screen">
+        <div
+            style="width:6rem;height:6rem;border-radius:50%;background:var(--bb-primary);display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;box-shadow:0 0 3rem rgba(212,175,55,.2)">
+            <span class="material-symbols-outlined" style="font-size:3rem;color:var(--bb-gold)">emoji_events</span>
+        </div>
+        <h2 style="font-family:var(--font-display);font-size:2rem;font-weight:900;margin-bottom:.5rem"
+            data-i18n="quiz_finish_title">Session terminée
+            !</h2>
+        <p style="color:var(--bb-text-muted);margin-bottom:.5rem" data-i18n="quiz_final_score_label">Score provisoire :
+            <strong id="final-score" style="color:var(--bb-gold);font-family:var(--font-mono)"></strong>
+        </p>
+        <p style="font-size:.875rem;color:var(--bb-text-subtle);margin-bottom:2rem" data-i18n="quiz_finish_desc">Les
+            résultats officiels seront
+            publiés par le Superadmin1. Redirection automatique dans 4 secondes…</p>
+        <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+            <a href="resultats.html" class="bb-btn bb-btn-gold" data-i18n="quiz_view_results"><span
+                    class="material-symbols-outlined">bar_chart</span>Voir mes résultats</a>
+            <a href="dashboard.html" class="bb-btn bb-btn-ghost" data-i18n="quiz_back_home"><span
+                    class="material-symbols-outlined">home</span>Tableau de bord</a>
+        </div>
+    </div>
+
+    <footer class="quiz-footer"
+        style="background:var(--bb-surface);border-top:1px solid var(--bb-border);padding:1rem 1.5rem;margin-top:auto">
+        <div class="quiz-footer-inner"
+            style="max-width:72rem;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;font-size:.75rem;color:var(--bb-text-subtle)">
+            <span>© 2025 BarakahBrain. <span data-i18n="footer_rights">Tous droits réservés.</span></span>
+            <div style="display:flex;gap:1.5rem">
+                <a href="politique.html" data-i18n="footer_privacy">Politique de confidentialité</a>
+                <a href="faq.html" data-i18n="footer_rules">Règles du quiz</a>
+                <a href="contact.html" data-i18n="contact_title">Support</a>
+            </div>
+        </div>
+    </footer>
+
+    <div id="bb-toast"></div>
+    <script src="assets/i18n.js"></script>
+    <script src="assets/app.js"></script>
+    <script>
+        // ══════════════════════════════════════════════════════
+        //  STATE
+        // ══════════════════════════════════════════════════════
+        let QUESTIONS = [];
+        let TOTAL = 0;
+        let currentIdx = 0;
+        let selectedOption = null;
+        let score = 0;
+        let answers = [];
+        let currentDifficulty = 1;
+        let currentCategory = null;
+        let currentPhase = 1;
+        let startTime = null;
+
+        // ══════════════════════════════════════════════════════
+        //  INITIALISATION
+        // ══════════════════════════════════════════════════════
+        async function init() {
+            const token = sessionStorage.getItem('bb_token');
+            if (!token) { window.location.href = 'connexion.html'; return; }
+
+            try {
+                const res = await fetch('/api/quiz/sections', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const sections = await res.json();
+                renderSections(sections);
+            } catch (err) {
+                console.error(err);
+                Toast.show(I18n.t('error_server'), 'error');
+            }
+        }
+
+        function renderSections(sections) {
+            const container = document.getElementById('sections-container');
+            container.innerHTML = '';
+
+            sections.forEach(sec => {
+                const card = document.createElement('div');
+                card.className = 'section-card';
+                card.innerHTML = `
+                    <span class="material-symbols-outlined section-card__icon" style="color:${sec.color}">${sec.icon}</span>
+                    <h3 class="section-card__title">${sec.title}</h3>
+                    <p class="section-card__desc">${sec.desc}</p>
+                    <div style="margin-top:1.5rem">
+                        <span class="bb-badge" style="background:${sec.color}20;color:${sec.color};border-color:${sec.color}40">5 Phases</span>
+                    </div>
+                `;
+                card.onclick = () => loadCategories(sec.id);
+                container.appendChild(card);
+            });
+        }
+
+        function showSections() {
+            document.getElementById('phase-screen').style.display = 'none';
+            document.getElementById('category-screen').style.display = 'none';
+            document.getElementById('section-screen').style.display = 'flex';
+        }
+
+        async function loadCategories(sectionId) {
+            currentDifficulty = sectionId;
+            const token = sessionStorage.getItem('bb_token');
+
+            document.getElementById('section-screen').style.display = 'none';
+            document.getElementById('phase-screen').style.display = 'none';
+            document.getElementById('category-screen').style.display = 'flex';
+
+            const container = document.getElementById('categories-container');
+            container.innerHTML = `<div style="text-align:center;padding:3rem;grid-column:1/-1">${I18n.t('quiz_loading_categories')}</div>`;
+
+            try {
+                const res = await fetch('/api/quiz/categories', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const categories = await res.json();
+                renderCategories(categories);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function renderCategories(categories) {
+            const container = document.getElementById('categories-container');
+            container.innerHTML = '';
+
+            categories.forEach(cat => {
+                const card = document.createElement('div');
+                card.className = 'category-card';
+                // Extract Arabic/Main name and translate if possible
+                const nameParts = cat.name.split('(');
+                const displayName = nameParts[0].trim();
+                const subName = nameParts[1] ? nameParts[1].replace(')', '').trim() : '';
+
+                card.innerHTML = `
+                    <div class="category-card__name">${displayName}</div>
+                    ${subName ? `<div class="category-card__sub">${subName}</div>` : ''}
+                `;
+                card.onclick = () => loadPhases(cat.name);
+                container.appendChild(card);
+            });
+        }
+
+        function showCategories() {
+            document.getElementById('phase-screen').style.display = 'none';
+            document.getElementById('category-screen').style.display = 'flex';
+        }
+
+        async function loadPhases(categoryName) {
+            currentCategory = categoryName;
+            const token = sessionStorage.getItem('bb_token');
+
+            // UI Switch
+            document.getElementById('category-screen').style.display = 'none';
+            document.getElementById('phase-screen').style.display = 'flex';
+
+            const container = document.getElementById('phases-container');
+            container.innerHTML = `<div style="text-align:center;padding:3rem;grid-column:1/-1">${I18n.t('quiz_loading_phases')}</div>`;
+
+            try {
+                const res = await fetch(`/api/quiz/phases?sectionId=${currentDifficulty}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const phases = await res.json();
+                renderPhases(phases);
+            } catch (err) {
+                Toast.show(I18n.t('error_loading_phases'), 'error');
+            }
+        }
+
+        function renderPhases(phases) {
+            const container = document.getElementById('phases-container');
+            container.innerHTML = '';
+
+            phases.forEach(phase => {
+                const card = document.createElement('div');
+                card.className = `phase-card ${!phase.unlocked ? 'phase-card--locked' : ''}`;
+                card.innerHTML = `
+                    ${!phase.unlocked ? '<span class="material-symbols-outlined phase-card__lock">lock</span>' : ''}
+                    <span class="phase-card__number">Phase ${phase.id}</span>
+                    <h4 class="phase-card__title">${phase.title}</h4>
+                    <p class="phase-card__desc">${phase.desc}</p>
+                `;
+                if (phase.unlocked) {
+                    card.onclick = () => startPhase(phase.id, phase.duration);
+                } else {
+                    card.onclick = () => Toast.show(I18n.t('quiz_locked'), 'info');
+                }
+                container.appendChild(card);
+            });
+        }
+
+        async function startPhase(phaseId, duration = 30) {
+            currentPhase = phaseId;
+            const token = sessionStorage.getItem('bb_token');
+
+            Toast.show(`Initialisation de la Phase ${phaseId}...`, 'info');
+
+            // Reset Timer to dynamic duration (default 180s per user feedback)
+            if (window.QuizTimer) {
+                window.QuizTimer.reset(180);
+            }
+
+            try {
+                const res = await fetch(`/api/quiz/questions?difficulty=${currentDifficulty}&phase=${phaseId}&category=${encodeURIComponent(currentCategory)}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                QUESTIONS = await res.json();
+                TOTAL = QUESTIONS.length;
+                answers = new Array(TOTAL).fill(null);
+
+                if (TOTAL === 0) {
+                    Toast.show('Aucune question disponible dans cette phase', 'warning');
+                    return;
+                }
+
+                // UI Swap
+                document.getElementById('phase-screen').style.display = 'none';
+                document.getElementById('quiz-layout').style.display = 'grid';
+
+                // Setup Sidebar
+                const grid = document.getElementById('q-grid');
+                grid.innerHTML = '';
+                document.getElementById('sidebar-tot').textContent = TOTAL;
+                document.getElementById('q-total').textContent = TOTAL;
+
+                for (let i = 0; i < TOTAL; i++) {
+                    const dot = document.createElement('div');
+                    dot.id = `dot-${i}`;
+                    dot.className = 'q-dot q-dot--todo';
+                    dot.textContent = i + 1;
+                    grid.appendChild(dot);
+                }
+
+                currentIdx = 0;
+                startTime = Date.now();
+                renderQuestion(0);
+                setDot(0, 'current');
+
+            } catch (err) {
+                console.error(err);
+                Toast.show('Erreur lors du chargement des questions', 'error');
+            }
+        }
+
+        function setDot(idx, state) {
+            const d = document.getElementById(`dot-${idx}`);
+            if (d) d.className = `q-dot q-dot--${state}`;
+        }
+
+        function updateProgress(idx) {
+            const pct = Math.round((idx / TOTAL) * 100);
+            document.getElementById('main-progress').style.width = pct + '%';
+            document.getElementById('sidebar-pct').textContent = pct;
+            const num = String(idx + 1).padStart(2, '0');
+            document.getElementById('sidebar-cur').textContent = num;
+            document.getElementById('q-number').textContent = num;
+        }
+
+        // ══════════════════════════════════════════════════════
+        //  RENDER
+        // ══════════════════════════════════════════════════════
+        function renderQuestion(idx) {
+            const data = QUESTIONS[idx];
+            document.getElementById('question-text').textContent = data.question;
+            const grid = document.getElementById('options-grid');
+            grid.innerHTML = '';
+
+            const isTF = data.type === 'tf';
+            const keys = ['A', 'B', 'C', 'D'];
+            const opts = data.options;
+
+            if (isTF) {
+                grid.style.gridTemplateColumns = '1fr 1fr';
+            } else {
+                grid.style.gridTemplateColumns = '1fr 1fr'; // Original layout
+            }
+
+            opts.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'bb-option';
+                btn.innerHTML = `<span class="bb-option__key">${keys[i]}</span><span class="bb-option__text">${opt}</span>`;
+                btn.addEventListener('click', () => selectOption(btn, i));
+                grid.appendChild(btn);
+            });
+            selectedOption = null;
+            document.getElementById('validate-btn').disabled = true;
+            updateProgress(idx);
+        }
+
+        function selectOption(btn, optIdx) {
+            document.querySelectorAll('.bb-option').forEach(b => b.classList.remove('bb-option--selected'));
+            btn.classList.add('bb-option--selected');
+            selectedOption = optIdx;
+            document.getElementById('validate-btn').disabled = false;
+        }
+
+        // ══════════════════════════════════════════════════════
+        //  TRANSITION ENGINE
+        // ══════════════════════════════════════════════════════
+        function nextQuestion(resultState) {
+            // Update dot for answered question
+            setDot(currentIdx, resultState);
+            if (resultState === 'correct') { score += 50; flashResult('correct'); }
+            else if (resultState === 'wrong') { flashResult('wrong'); }
+
+            // Slide current card out
+            const card = document.getElementById('question-card');
+            card.classList.add('leaving');
+
+            setTimeout(() => {
+                currentIdx++;
+                if (currentIdx >= TOTAL) { finishQuiz(); return; }
+
+                // Load next question, then slide in
+                card.classList.remove('leaving');
+                card.classList.add('entering');
+                renderQuestion(currentIdx);
+                setDot(currentIdx, 'current');
+
+                requestAnimationFrame(() => requestAnimationFrame(() => card.classList.remove('entering')));
+            }, 320);
+        }
+
+        function flashResult(type) {
+            const el = document.getElementById(`result-${type}`);
+            el.classList.add('show');
+            setTimeout(() => el.classList.remove('show'), 650);
+        }
+
+        // ══════════════════════════════════════════════════════
+        //  ACTIONS
+        // ══════════════════════════════════════════════════════
+        function validateAnswer() {
+            if (selectedOption === null) { Toast.show('Veuillez sélectionner une réponse.', 'error'); return; }
+
+            const validateBtn = document.getElementById('validate-btn');
+
+            // If button is in "Continue" mode, move to next question
+            if (validateBtn.getAttribute('data-mode') === 'continue') {
+                resetValidationState();
+                nextQuestion(answers[currentIdx]);
+                return;
+            }
+
+            Confirm.ask(
+                'Confirmer la réponse',
+                'Voulez-vous valider cette réponse ? Cette action est définitive pour cette question.',
+                () => {
+                    const question = QUESTIONS[currentIdx];
+                    const isCorrect = selectedOption === question.correct;
+                    answers[currentIdx] = isCorrect ? 'correct' : 'wrong';
+
+                    if (isCorrect) {
+                        nextQuestion('correct');
+                    } else {
+                        // Wrong answer: show explanation and wait
+                        showEducationalFeedback(question.explanation);
+                    }
+                }
+            );
+        }
+
+        function showEducationalFeedback(explanation) {
+            const validateBtn = document.getElementById('validate-btn');
+            const explanationCard = document.getElementById('explanation-card');
+            const explanationText = document.getElementById('explanation-text');
+
+            // Signal error visually
+            flashResult('wrong');
+            document.querySelectorAll('.bb-option--selected').forEach(el => el.classList.add('bb-option--wrong'));
+
+            // Highlight the correct option
+            const correctOptionIdx = QUESTIONS[currentIdx].correct;
+            document.querySelectorAll('.bb-option')[correctOptionIdx].classList.add('bb-option--correct');
+
+            // Show explanation
+            explanationText.textContent = explanation || "L'explication détaillée sera bientôt disponible.";
+            explanationCard.style.display = 'block';
+
+            // Change button to "Continue"
+            validateBtn.innerHTML = `<span>Continuer</span> <span class="material-symbols-outlined">arrow_forward</span>`;
+            validateBtn.setAttribute('data-mode', 'continue');
+            validateBtn.classList.remove('bb-btn-gold');
+            validateBtn.classList.add('bb-btn-primary');
+        }
+
+        function resetValidationState() {
+            const validateBtn = document.getElementById('validate-btn');
+            const explanationCard = document.getElementById('explanation-card');
+
+            explanationCard.style.display = 'none';
+            validateBtn.innerHTML = `<span data-i18n="quiz_validate">Valider</span> <span class="material-symbols-outlined">chevron_right</span>`;
+            validateBtn.removeAttribute('data-mode');
+            validateBtn.classList.remove('bb-btn-primary');
+            validateBtn.classList.add('bb-btn-gold');
+        }
+
+        function skipQuestion() {
+            Confirm.ask(
+                'Passer la question',
+                'Voulez-vous vraiment passer cette question ? Elle sera comptabilisée comme "Sautée" et vous ne pourrez pas y revenir.',
+                () => {
+                    answers[currentIdx] = 'skipped';
+                    nextQuestion('skipped');
+                },
+                true
+            );
+        }
+
+        function exitQuiz() {
+            Confirm.ask(
+                'Quitter le quiz',
+                'Êtes-vous sûr de vouloir quitter ? Votre progression actuelle ne sera pas enregistrée.',
+                () => { window.location.href = 'dashboard.html'; },
+                true
+            );
+        }
+
+        // ══════════════════════════════════════════════════════
+        //  FINISH
+        // ══════════════════════════════════════════════════════
+        async function finishQuiz() {
+            const correct = answers.filter(a => a === 'correct').length;
+            const wrong = answers.filter(a => a === 'wrong').length;
+            const skipped = answers.filter(a => a === 'skipped').length;
+            const finalScore = correct * 50;
+            const timeTaken = Math.round((Date.now() - startTime) / 1000);
+
+            const token = sessionStorage.getItem('bb_token');
+
+            // Persist to Backend
+            try {
+                await fetch('/api/quiz/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        score: finalScore,
+                        correctAnswers: correct,
+                        totalQuestions: TOTAL,
+                        difficulty: currentDifficulty,
+                        phase: currentPhase,
+                        temps_passe: timeTaken
+                    })
+                });
+            } catch (e) { console.error("Score persist error:", e); }
+
+            // Persist locally for results page
+            sessionStorage.setItem('bb_quiz_result', JSON.stringify({
+                correct, wrong, skipped,
+                score: finalScore,
+                total: TOTAL,
+                answers,
+                questions: QUESTIONS.map(q => ({ q: q.question, correct: q.correct, opts: q.options })),
+                timeTaken
+            }));
+
+            document.getElementById('quiz-layout').style.display = 'none';
+            const finishScreen = document.getElementById('finish-screen');
+            finishScreen.style.display = 'flex';
+            document.getElementById('final-score').textContent =
+                `${finalScore} pts — ${correct}/${TOTAL} correctes`;
+
+            setTimeout(() => { window.location.href = 'resultats.html'; }, 4000);
+        }
+
+        // Launch
+        init();
+    </script>
+</body>
+
+</html>

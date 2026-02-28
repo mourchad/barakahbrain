@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>BarakahBrain — Stats Globales · Superadmin1</title>
+    <link rel="icon" href="../assets/logo_BarakahBrain.png" type="image/png" />
+    <link rel="stylesheet" href="../assets/styles.css" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        @media(max-width:768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .bb-main {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+            }
+
+            .bb-topbar {
+                padding: 1rem;
+            }
+
+            .chart-container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body style="background:var(--bb-bg)">
+
+    <!-- Sidebar Overlay -->
+    <div class="bb-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="bb-sidebar" id="mainSidebar">
+        <div class="bb-sidebar__brand">
+            <img src="../assets/logo_BarakahBrain.png" alt="BarakahBrain" />
+            <div class="bb-header__brand">
+                <span class="bb-header__name">BarakahBrain</span>
+            </div>
+        </div>
+        <nav class="bb-sidebar__nav">
+            <div class="bb-sidebar__section">Console d'administration</div>
+            <a href="admin-dashboard.html" class="bb-sidebar__link"><span
+                    class="material-symbols-outlined bb-sidebar__icon">dashboard</span>Dashboard Admin</a>
+            <a href="admin-utilisateurs.html" class="bb-sidebar__link"><span
+                    class="material-symbols-outlined bb-sidebar__icon">group</span>Utilisateurs</a>
+            <a href="admin-questions.html" class="bb-sidebar__link"><span
+                    class="material-symbols-outlined bb-sidebar__icon">quiz</span>Questions</a>
+            <div class="bb-sidebar__section" style="margin-top:.5rem">SuperAdmin 1 Exclusif</div>
+            <a href="superadmin1.html" class="bb-sidebar__link"><span
+                    class="material-symbols-outlined bb-sidebar__icon">shield_person</span>Commandement</a>
+            <a href="superadmin-stats.html" class="bb-sidebar__link bb-sidebar__link--active"><span
+                    class="material-symbols-outlined bb-sidebar__icon">monitoring</span>Stats Globales</a>
+            <a href="admin-logs.html" class="bb-sidebar__link"><span
+                    class="material-symbols-outlined bb-sidebar__icon">history</span>Logs Complets</a>
+        </nav>
+        <div class="bb-sidebar__footer">
+            <div class="bb-sidebar__user">
+                <div class="bb-avatar bb-avatar--sm" style="border-color:var(--bb-gold)">S1</div>
+                <div style="flex:1;min-width:0">
+                    <div class="bb-sidebar__user-name truncate">superadmin1</div>
+                    <div class="bb-sidebar__user-role">Superadmin Niveau 1</div>
+                </div>
+                <button onclick="confirmLogout()" class="bb-icon-btn"><span
+                        class="material-symbols-outlined">logout</span></button>
+            </div>
+        </div>
+    </aside>
+
+    <div class="bb-main">
+        <header class="bb-topbar">
+            <div style="display:flex;align-items:center;gap:1rem">
+                <button class="bb-hamburger bb-icon-btn" onclick="toggleSidebar()">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <h1 class="bb-topbar__title">Statistiques Globales</h1>
+            </div>
+            <div class="bb-topbar__actions">
+                <a href="admin-dashboard.html" class="bb-btn bb-btn-ghost bb-btn-sm" style="gap: 0.4rem;">
+                    <span class="material-symbols-outlined" style="font-size: 1.1rem">arrow_back</span>
+                    Dashboard
+                </a>
+                <button class="bb-icon-btn" title="Notifications" id="notifBell">
+                    <span class="material-symbols-outlined">notifications_active</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="bb-main-content">
+            <!-- KPIs -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.25rem">
+                <div class="bb-stat-card">
+                    <div class="bb-stat-card__label">Inscriptions Total</div>
+                    <div class="bb-stat-card__value text-gold">15 284</div>
+                    <div class="bb-stat-card__change bb-stat-card__change--up">+12% ce mois</div>
+                </div>
+                <div class="bb-stat-card">
+                    <div class="bb-stat-card__label">Quiz Complétés</div>
+                    <div class="bb-stat-card__value" style="color:var(--bb-success)">42 105</div>
+                    <div class="bb-stat-card__change bb-stat-card__change--up">+8% vs hier</div>
+                </div>
+                <div class="bb-stat-card">
+                    <div class="bb-stat-card__label">Temps Moyen / Quiz</div>
+                    <div class="bb-stat-card__value" style="color:var(--bb-info)">08:42</div>
+                    <div style="font-size:.75rem;color:var(--bb-text-subtle);margin-top:.25rem">Stable</div>
+                </div>
+                <div class="bb-stat-card">
+                    <div class="bb-stat-card__label">Taux Réussite Moyen</div>
+                    <div class="bb-stat-card__value" style="color:var(--bb-warning)">68%</div>
+                    <div style="font-size:.75rem;color:var(--bb-text-subtle);margin-top:.25rem">Niveau Expert inclus
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <!-- Trend Chart -->
+                <div class="chart-container">
+                    <h3 style="font-weight:700;margin-bottom:1.5rem">Évolution des Inscriptions (7 derniers jours)</h3>
+                    <canvas id="trendChart" style="max-height:300px"></canvas>
+                </div>
+
+                <!-- Distribution -->
+                <div class="chart-container">
+                    <h3 style="font-weight:700;margin-bottom:1.5rem">Répartition par Difficulté</h3>
+                    <canvas id="distChart" style="max-height:300px"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="bb-toast"></div>
+    <script src="../assets/app.js"></script>
+    <script>
+        function toggleSidebar() {
+            document.getElementById('mainSidebar').classList.toggle('bb-sidebar--open');
+            document.getElementById('sidebarOverlay').classList.toggle('bb-sidebar-overlay--active');
+        }
+
+        let trendChart, distChart;
+
+        async function initCharts() {
+            const token = sessionStorage.getItem('bb_token');
+            if (!token) { window.location.href = '../connexion.html'; return; }
+
+            try {
+                const res = await fetch('/api/admin/advanced-stats', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) return;
+                const stats = await res.json();
+
+                // Update KPIs
+                const kpis = document.querySelectorAll('.bb-stat-card__value');
+                if (kpis.length >= 4) {
+                    kpis[0].textContent = stats.totalUsers.toLocaleString();
+                    kpis[1].textContent = stats.totalQuestions.toLocaleString(); // Simplified
+                    kpis[2].textContent = "08:42"; // Placeholder or from DB if added
+                    kpis[3].textContent = `${Math.round(stats.globalAvgScore || 0)}%`;
+                }
+
+                // Trend Chart
+                const ctxTrend = document.getElementById('trendChart').getContext('2d');
+                if (trendChart) trendChart.destroy();
+                trendChart = new Chart(ctxTrend, {
+                    type: 'line',
+                    data: {
+                        labels: stats.registrationTrend.map(t => t.date),
+                        datasets: [{
+                            label: 'Inscriptions',
+                            data: stats.registrationTrend.map(t => t.count),
+                            borderColor: '#d4af37',
+                            backgroundColor: 'rgba(212,175,55,0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' }, beginAtZero: true },
+                            x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                        }
+                    }
+                });
+
+                // Distribution Chart
+                const ctxDist = document.getElementById('distChart').getContext('2d');
+                if (distChart) distChart.destroy();
+
+                const diffLabels = ['Niveau 1', 'Niveau 2', 'Niveau 3'];
+                const diffData = [0, 0, 0];
+                stats.difficultyDistribution.forEach(d => {
+                    if (d.difficulty >= 1 && d.difficulty <= 3) {
+                        diffData[d.difficulty - 1] = d.count;
+                    }
+                });
+
+                distChart = new Chart(ctxDist, {
+                    type: 'doughnut',
+                    data: {
+                        labels: diffLabels,
+                        datasets: [{
+                            data: diffData,
+                            backgroundColor: ['#10b981', '#3b82f6', '#d4af37'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { color: '#94a3b8', padding: 20 } }
+                        },
+                        cutout: '70%'
+                    }
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+            if (window.updateNotificationBadge) updateNotificationBadge(3);
+        });
+    </script>
+</body>
+
+</html>

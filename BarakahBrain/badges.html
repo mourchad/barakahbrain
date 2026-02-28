@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BarakahBrain — Badges & Succès</title>
+    <link rel="icon" href="assets/logo_BarakahBrain.png" type="image/png" />
+    <link rel="stylesheet" href="assets/styles.css" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
+    <style>
+        .badge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .badge-card {
+            background: var(--bb-surface);
+            border: 1px solid var(--bb-border);
+            border-radius: var(--bb-radius-xl);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: all var(--bb-transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .badge-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--bb-gold);
+            box-shadow: var(--bb-shadow-gold);
+        }
+
+        .badge-card--locked {
+            opacity: 0.5;
+            filter: grayscale(1);
+        }
+
+        .badge-card__icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .badge-card__title {
+            font-weight: 800;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .badge-card__desc {
+            font-size: 0.75rem;
+            color: var(--bb-text-muted);
+            line-height: 1.4;
+        }
+
+        .badge-card__lock {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            font-size: 1.25rem;
+            color: var(--bb-text-subtle);
+        }
+    </style>
+</head>
+
+<body class="bb-bg-pattern">
+
+    <header class="bb-header">
+        <a href="dashboard.html" class="bb-icon-btn"><span class="material-symbols-outlined">arrow_back</span></a>
+        <span style="font-family:var(--font-display);font-size:1.125rem;font-weight:700">Mes Badges & Succès</span>
+        <div style="width:2.5rem"></div>
+    </header>
+
+    <main style="max-width:64rem;margin:0 auto;padding:3rem 1.5rem">
+        <div style="text-align:center;margin-bottom:3rem">
+            <h1 style="font-family:var(--font-display);font-size:2.25rem;font-weight:900;margin-bottom:0.75rem">Palmarès
+                d'Excellence</h1>
+            <p style="color:var(--bb-text-muted);max-width:32rem;margin:0 auto">Collectionnez des badges en répondant
+                correctement aux quiz et en grimpant dans le classement.</p>
+        </div>
+
+        <section style="margin-bottom:4rem">
+            <h3
+                style="font-size:0.8125rem;font-weight:800;color:var(--bb-gold);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1.5rem">
+                Badges de Niveau</h3>
+            <div class="badge-grid">
+                <div class="badge-card">
+                    <span class="material-symbols-outlined badge-card__icon"
+                        style="color: var(--bb-gold);">military_tech</span>
+                    <h4 class="badge-card__title">Légende Or</h4>
+                    <p class="badge-card__desc">Top 1 du classement mondial.</p>
+                </div>
+                <div class="badge-card">
+                    <span class="material-symbols-outlined badge-card__icon" style="color: #94a3b8;">stars</span>
+                    <h4 class="badge-card__title">Élite Argent</h4>
+                    <p class="badge-card__desc">Top 10 du classement mondial.</p>
+                </div>
+                <div class="badge-card">
+                    <span class="material-symbols-outlined badge-card__icon"
+                        style="color: #c2773c;">workspace_premium</span>
+                    <h4 class="badge-card__title">Maître Bronze</h4>
+                    <p class="badge-card__desc">Top 50 du classement mondial.</p>
+                </div>
+                <div class="badge-card badge-card--locked">
+                    <span class="material-symbols-outlined badge-card__lock">lock</span>
+                    <span class="material-symbols-outlined badge-card__icon">shield</span>
+                    <h4 class="badge-card__title">Gardien</h4>
+                    <p class="badge-card__desc">100 quiz sans aucune erreur.</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h3
+                style="font-size:0.8125rem;font-weight:800;color:var(--bb-text-subtle);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1.5rem">
+                Progression & Savoir</h3>
+            <div class="badge-grid">
+                <div class="badge-card">
+                    <span class="material-symbols-outlined badge-card__icon"
+                        style="color: var(--bb-success);">menu_book</span>
+                    <h4 class="badge-card__title">Étudiant Assidu</h4>
+                    <p class="badge-card__desc">A complété 10 phases d'apprentissage.</p>
+                </div>
+                <div class="badge-card badge-card--locked">
+                    <span class="material-symbols-outlined badge-card__lock">lock</span>
+                    <span class="material-symbols-outlined badge-card__icon" style="color: var(--bb-info);">speed</span>
+                    <h4 class="badge-card__title">Éclair</h4>
+                    <p class="badge-card__desc">Répondu à 10 questions en moins de 30s.</p>
+                </div>
+                <div class="badge-card badge-card--locked">
+                    <span class="material-symbols-outlined badge-card__lock">lock</span>
+                    <span class="material-symbols-outlined badge-card__icon" style="color: #a855f7;">psychology</span>
+                    <h4 class="badge-card__title">Sage</h4>
+                    <p class="badge-card__desc">A atteint 10 000 points de score total.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="bb-toast"></div>
+    <script src="assets/app.js"></script>
+</body>
+
+</html>

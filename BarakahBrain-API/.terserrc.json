@@ -1,0 +1,17 @@
+{
+  "compress": {
+    "drop_console": false,
+    "drop_debugger": true,
+    "passes": 2,
+    "pure_getters": true,
+    "unsafe_methods": false
+  },
+  "format": {
+    "comments": false,
+    "indent_level": 0
+  },
+  "mangle": {
+    "properties": false,
+    "reserved": ["$", "jQuery", "console", "window", "document", "navigator"]
+  }
+}

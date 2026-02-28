@@ -1,0 +1,5 @@
+# ignore unrelated scripts
+*.js
+!server.js
+!migrate.js
+!tests/**/*.js

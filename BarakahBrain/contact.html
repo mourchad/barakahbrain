@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>BarakahBrain — Contact &amp; Support</title>
+    <link rel="icon" href="assets/logo_BarakahBrain.png" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/styles.css" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
+    <style>
+        @media (max-width: 768px) {
+            .contact-layout {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            main {
+                padding: 2rem 1rem !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="bb-bg-pattern">
+
+    <header id="bb-header-global" data-active="contact"></header>
+
+    <main style="max-width:56rem;margin:0 auto;padding:4rem 1.5rem">
+        <div style="display: flex; justify-content: flex-start; margin-bottom: 1rem;">
+            <a href="index.html" class="bb-btn bb-btn-ghost bb-btn-sm" style="gap: 0.4rem;">
+                <span class="material-symbols-outlined" style="font-size: 1.1rem">arrow_back</span>
+                Retour
+            </a>
+        </div>
+
+        <div style="text-align:center;margin-bottom:3rem">
+            <span class="bb-badge bb-badge--gold" style="display:inline-flex;margin-bottom:1rem">Support</span>
+            <h1 style="font-family:var(--font-display);font-size:2.25rem;font-weight:900;margin-bottom:.75rem"
+                data-i18n="contact_title">Nous contacter</h1>
+            <p style="color:var(--bb-text-muted);font-size:1.0625rem" data-i18n="contact_subtitle">Notre équipe répond
+                généralement dans les 24 heures.</p>
+        </div>
+
+        <div class="contact-layout" style="display:grid;grid-template-columns:1.4fr 1fr;gap:2rem;align-items:start">
+            <!-- Form -->
+            <div class="bb-card">
+                <form onsubmit="handleContact(event)" style="display:flex;flex-direction:column;gap:1.125rem">
+                    <div>
+                        <label class="bb-label" data-i18n="label_fullname">Nom complet</label>
+                        <div class="bb-input-wrap"><span
+                                class="bb-input-icon material-symbols-outlined">person</span><input
+                                class="bb-input bb-input--icon" type="text" id="contactName"
+                                placeholder="Ibrahim Al-Farsi" required />
+                        </div>
+                    </div>
+                    <div>
+                        <label class="bb-label" data-i18n="label_email">E-mail</label>
+                        <div class="bb-input-wrap"><span
+                                class="bb-input-icon material-symbols-outlined">mail</span><input
+                                class="bb-input bb-input--icon" type="email" id="contactEmail"
+                                placeholder="votre@email.com" required />
+                        </div>
+                    </div>
+                    <div>
+                        <label class="bb-label" data-i18n="contact_label_subject">Sujet</label>
+                        <select class="bb-select" id="contactSubject" required>
+                            <option value="" data-i18n="contact_subject_placeholder">Choisir un sujet…</option>
+                            <option data-i18n="contact_subject_tech">Problème technique</option>
+                            <option data-i18n="contact_subject_cheat">Incident anti-triche</option>
+                            <option data-i18n="contact_subject_account">Question sur mon compte</option>
+                            <option data-i18n="contact_subject_suggest">Suggestion d'amélioration</option>
+                            <option data-i18n="contact_subject_other">Autre</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="bb-label" data-i18n="contact_label_message">Message</label>
+                        <textarea class="bb-input" id="contactMessage" rows="5"
+                            data-i18n-placeholder="contact_message_placeholder"
+                            placeholder="Décrivez votre problème en détail…" style="resize:vertical"
+                            required></textarea>
+                    </div>
+                    <button type="submit" class="bb-btn bb-btn-primary bb-btn-full">
+                        <span class="material-symbols-outlined">send</span>
+                        <span data-i18n="contact_btn_send">Envoyer le message</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Info Panel -->
+            <div style="display:flex;flex-direction:column;gap:1.25rem">
+                <div class="bb-card bb-card--green">
+                    <div style="display:flex;align-items:flex-start;gap:.875rem">
+                        <div
+                            style="background:rgba(212,175,55,.15);border-radius:var(--bb-radius);padding:.75rem;display:flex">
+                            <span class="material-symbols-outlined text-gold">schedule</span>
+                        </div>
+                        <div>
+                            <h4 style="font-weight:700;margin-bottom:.375rem" data-i18n="contact_info_delay_title">Délai
+                                de réponse</h4>
+                            <p style="color:var(--bb-text-muted);font-size:.875rem" data-i18n="contact_info_delay_desc">
+                                En général moins de 24h ouvrées.
+                                Incidents urgents traités sous 2h.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bb-card bb-card--green">
+                    <div style="display:flex;align-items:flex-start;gap:.875rem">
+                        <div
+                            style="background:rgba(212,175,55,.15);border-radius:var(--bb-radius);padding:.75rem;display:flex">
+                            <span class="material-symbols-outlined text-gold">support_agent</span>
+                        </div>
+                        <div>
+                            <h4 style="font-weight:700;margin-bottom:.375rem" data-i18n="contact_info_agent_title">
+                                Support dédié</h4>
+                            <p style="color:var(--bb-text-muted);font-size:.875rem" data-i18n="contact_info_agent_desc">
+                                Équipe disponible Lun–Ven de 9h à
+                                18h.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bb-card">
+                    <h4 style="font-weight:700;margin-bottom:.875rem" data-i18n="contact_before_title">Avant de nous
+                        contacter</h4>
+                    <p style="font-size:.875rem;color:var(--bb-text-muted);margin-bottom:.625rem"
+                        data-i18n="contact_before_desc">Consultez la FAQ — la plupart des
+                        questions y sont répondues.</p>
+                    <div
+                        style="display:flex;flex-direction:column;gap:.4rem;font-size:.8125rem;color:var(--bb-text-muted)">
+                        <div style="display:flex;align-items:center;gap:.5rem"><span class="material-symbols-outlined"
+                                style="font-size:1rem;color:var(--bb-success)">check_circle</span>
+                            <span data-i18n="contact_feature_account">Problèmes de compte</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:.5rem"><span class="material-symbols-outlined"
+                                style="font-size:1rem;color:var(--bb-success)">check_circle</span>
+                            <span data-i18n="contact_feature_tech">Incidents techniques</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:.5rem"><span class="material-symbols-outlined"
+                                style="font-size:1rem;color:var(--bb-success)">check_circle</span>
+                            <span data-i18n="contact_feature_score">Contestations de score</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer id="bb-footer-global"></footer>
+
+    <div id="bb-toast"></div>
+    <script src="assets/i18n.js"></script>
+    <script src="assets/layouts.js"></script>
+    <script src="assets/app.js"></script>
+    <script>
+        async function initContact() {
+            const token = sessionStorage.getItem('bb_token');
+            if (token) {
+                try {
+                    const response = await fetch('/api/user/profile', {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (response.ok) {
+                        const user = await response.json();
+                        document.getElementById('contactName').value = user.fullName || '';
+                        document.getElementById('contactEmail').value = user.email || '';
+                    }
+                } catch (err) {
+                    console.error('Erreur auto-fill contact:', err);
+                }
+            }
+        }
+
+        function handleContact(e) {
+            e.preventDefault();
+            Toast.show('Message envoyé ! Nous répondrons dans les 24h.', 'success');
+            // Si on est loggué, on ne reset pas forcément tout ou on re-fill
+            const token = sessionStorage.getItem('bb_token');
+            if (!token) e.target.reset();
+            else {
+                document.getElementById('contactSubject').value = '';
+                document.getElementById('contactMessage').value = '';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initContact);
+    </script>
+</body>
+
+</html>

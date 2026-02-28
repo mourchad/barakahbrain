@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BarakahBrain — Paramètres</title>
+    <link rel="icon" href="assets/logo_BarakahBrain.png" type="image/png" />
+    <link rel="stylesheet" href="assets/styles.css" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
+    <style>
+        body {
+            padding-bottom: 2rem;
+        }
+
+        .settings-content {
+            max-width: 28rem;
+            margin: 0 auto;
+            padding: 1.5rem 1rem 2rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .settings-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: var(--bb-surface);
+            border: 1px solid var(--bb-border);
+            border-radius: var(--bb-radius-lg);
+            margin-bottom: 0.75rem;
+        }
+    </style>
+</head>
+
+<body style="background:var(--bb-bg)">
+
+    <header id="bb-header-global" data-active="settings"></header>
+
+    <main class="settings-content">
+        <section style="margin-bottom:2rem">
+            <h3 style="font-size:.8125rem;font-weight:800;color:var(--bb-gold);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem"
+                data-i18n="section_profile">Mon Profil</h3>
+
+            <div class="bb-card" style="padding:1.5rem">
+                <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:1.5rem">
+                    <div style="position:relative;margin-bottom:1rem">
+                        <div class="bb-avatar bb-avatar--xl" id="userAvatar" style="border:2px solid var(--bb-gold)">?
+                        </div>
+                        <button onclick="document.getElementById('avatarInput').click()"
+                            style="position:absolute;bottom:0;right:0;background:var(--bb-gold);color:#060c1a;width:2rem;height:2rem;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--bb-bg)">
+                            <span class="material-symbols-outlined" style="font-size:1.1rem">photo_camera</span>
+                        </button>
+                        <input type="file" id="avatarInput" style="display:none" accept="image/*"
+                            onchange="previewAvatar(this)" />
+                    </div>
+                </div>
+
+                <form id="settingsForm" onsubmit="handleSave(event)"
+                    style="display:flex;flex-direction:column;gap:1.25rem">
+                    <div>
+                        <label class="bb-label" for="fullName" data-i18n="label_fullname">Nom Complet</label>
+                        <input class="bb-input" id="fullName" type="text" placeholder="Ibrahim Al-Farsi" required />
+                    </div>
+                    <div>
+                        <label class="bb-label">E-mail</label>
+                        <input class="bb-input" id="displayEmail" type="text" readonly disabled style="opacity:.6" />
+                    </div>
+                    <button type="submit" class="bb-btn bb-btn-primary bb-btn-full">
+                        <span class="material-symbols-outlined">save</span>
+                        <span data-i18n="settings_save">Enregistrer les modifications</span>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <section style="margin-bottom:2rem">
+            <h3 style="font-size:.8125rem;font-weight:800;color:var(--bb-gold);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem"
+                data-i18n="section_preferences">Préférences</h3>
+
+            <div class="settings-item">
+                <div style="display:flex;align-items:center;gap:.75rem">
+                    <span class="material-symbols-outlined text-gold">language</span>
+                    <div>
+                        <div style="font-size:.875rem;font-weight:700">Langue</div>
+                        <div style="font-size:.75rem;color:var(--bb-text-subtle)">Français (Par défaut)</div>
+                    </div>
+                </div>
+                <button class="bb-btn bb-btn-ghost bb-btn-sm" style="color:var(--bb-gold)">Changer</button>
+            </div>
+
+            <div class="settings-item">
+                <div style="display:flex;align-items:center;gap:.75rem">
+                    <span class="material-symbols-outlined text-gold">notifications</span>
+                    <div>
+                        <div style="font-size:.875rem;font-weight:700">Notifications Push</div>
+                        <div style="font-size:.75rem;color:var(--bb-text-subtle)">Alertes de nouveaux quiz</div>
+                    </div>
+                </div>
+                <label class="bb-switch">
+                    <input type="checkbox" checked />
+                    <span class="bb-switch__slider"></span>
+                </label>
+            </div>
+        </section>
+
+        <section id="security" style="margin-bottom:2rem">
+            <h3 data-i18n="settings_security"
+                style="font-size:.8125rem;font-weight:800;color:var(--bb-gold);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem">
+                Sécurité du compte</h3>
+
+            <div class="bb-card" style="padding:1.5rem">
+                <form id="passwordForm" onsubmit="handleChangePassword(event)"
+                    style="display:flex;flex-direction:column;gap:1.25rem">
+                    <div>
+                        <label class="bb-label" for="currentPassword" data-i18n="settings_current_password">Mot de passe
+                            actuel</label>
+                        <input class="bb-input" id="currentPassword" type="password" required />
+                    </div>
+                    <div>
+                        <label class="bb-label" for="newPassword" data-i18n="settings_new_password">Nouveau mot de
+                            passe</label>
+                        <input class="bb-input" id="newPassword" type="password" required />
+                    </div>
+                    <div>
+                        <label class="bb-label" for="confirmPassword" data-i18n="settings_confirm_password">Confirmer le
+                            nouveau mot de passe</label>
+                        <input class="bb-input" id="confirmPassword" type="password" required />
+                    </div>
+                    <button type="submit" class="bb-btn bb-btn-gold bb-btn-full">
+                        <span class="material-symbols-outlined">key</span>
+                        <span data-i18n="settings_change_password">Changer le mot de passe</span>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <section>
+            <h3
+                style="font-size:.8125rem;font-weight:800;color:var(--bb-danger);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem">
+                Zone de Danger</h3>
+            <button onclick="confirmLogout()" class="bb-btn bb-btn-danger bb-btn-outline bb-btn-full"
+                style="justify-content:center">
+                <span class="material-symbols-outlined">logout</span>
+                Se déconnecter
+            </button>
+        </section>
+    </main>
+
+    <div id="bb-toast"></div>
+    <script src="assets/i18n.js"></script>
+    <script src="assets/layouts.js"></script>
+    <script src="assets/app.js"></script>
+    <script>
+        async function initSettings() {
+            const token = sessionStorage.getItem('bb_token');
+            if (!token) { window.location.href = 'connexion.html'; return; }
+
+            try {
+                const response = await fetch('/api/user/profile', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) throw new Error();
+                const user = await response.json();
+
+                document.getElementById('fullName').value = user.fullName;
+                document.getElementById('displayEmail').value = user.username; // Usant le username comme identifiant mail pour le moment
+
+                const avatar = document.getElementById('userAvatar');
+                if (user.avatar) {
+                    avatar.innerHTML = `<img src="${user.avatar}" id="avatarImg" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%" />`;
+                } else {
+                    avatar.textContent = user.fullName.charAt(0).toUpperCase();
+                }
+
+                // Initialiser le state pour FormGuard
+                if (window.FormGuard) FormGuard.watch('settingsForm');
+
+                // Scroll to security if hash provided
+                if (window.location.hash === '#security') {
+                    setTimeout(() => {
+                        document.getElementById('security').scrollIntoView({ behavior: 'smooth' });
+                    }, 500);
+                }
+
+            } catch (err) {
+                console.error(err);
+                // window.location.href = 'connexion.html';
+            }
+        }
+
+        async function handleSave(e) {
+            e.preventDefault();
+            const fullName = document.getElementById('fullName').value.trim();
+            const token = sessionStorage.getItem('bb_token');
+
+            Confirm.ask(
+                'Enregistrer les modifications',
+                'Voulez-vous enregistrer les changements apportés à votre profil ?',
+                async () => {
+                    Toast.show('Enregistrement...', 'info');
+
+                    try {
+                        const avatarImg = document.getElementById('avatarImg');
+                        const avatar = avatarImg ? avatarImg.src : null;
+
+                        const res = await fetch('/api/user/profile', {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ fullName, avatar })
+                        });
+
+                        if (res.ok) {
+                            Toast.show('Profil mis à jour !', 'success');
+                            // Re-init guard initial state if needed or just let it be
+                        } else {
+                            Toast.show('Erreur lors de la mise à jour', 'error');
+                        }
+                    } catch (err) {
+                        Toast.show('Serveur injoignable', 'error');
+                    }
+                }
+            );
+        }
+
+        async function handleChangePassword(e) {
+            e.preventDefault();
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (newPassword !== confirmPassword) {
+                Toast.show('Les nouveaux mots de passe ne correspondent pas.', 'error');
+                return;
+            }
+
+            const token = sessionStorage.getItem('bb_token');
+
+            Confirm.ask(
+                'Changer le mot de passe',
+                'Voulez-vous vraiment modifier votre mot de passe ? Vous devrez vous reconnecter par précaution.',
+                async () => {
+                    Toast.show('Mise à jour...', 'info');
+                    try {
+                        const res = await fetch('/api/auth/change-password', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ currentPassword, newPassword })
+                        });
+
+                        const data = await res.json();
+                        if (res.ok) {
+                            Toast.show('Mot de passe mis à jour ! Redirection...', 'success');
+                            setTimeout(() => {
+                                sessionStorage.clear();
+                                window.location.href = 'connexion.html';
+                            }, 2000);
+                        } else {
+                            Toast.show(data.message || 'Erreur lors du changement', 'error');
+                        }
+                    } catch (err) {
+                        Toast.show('Serveur injoignable', 'error');
+                    }
+                }
+            );
+        }
+
+        function previewAvatar(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const avatar = document.getElementById('userAvatar');
+                    avatar.innerHTML = `<img src="${e.target.result}" id="avatarImg" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%" />`;
+                    Toast.show('Nouvel avatar sélectionné (cliquez sur Enregistrer)', 'info');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function confirmLogout() {
+            Confirm.ask(
+                'Déconnexion',
+                'Voulez-vous vraiment vous déconnecter ?',
+                () => {
+                    sessionStorage.clear();
+                    window.location.href = 'connexion.html';
+                },
+                true
+            );
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initSettings();
+        });
+    </script>
+</body>
+
+</html>

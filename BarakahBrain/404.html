@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BarakahBrain — Page non trouvée (404)</title>
+    <link rel="icon" href="assets/logo_BarakahBrain.png" type="image/png" />
+    <link rel="stylesheet" href="assets/styles.css" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .error-container {
+            max-width: 32rem;
+            width: 100%;
+        }
+
+        .error-code {
+            font-family: var(--font-display);
+            font-size: 8rem;
+            font-weight: 900;
+            line-height: 1;
+            background: linear-gradient(135deg, var(--bb-gold) 0%, #8a6e1a 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 4px 12px rgba(212, 175, 55, 0.3));
+        }
+    </style>
+</head>
+
+<body class="bb-bg-pattern">
+    <div class="error-container">
+        <div class="error-code">404</div>
+        <h1 style="font-family: var(--font-display); font-size: 2rem; font-weight: 800; margin-bottom: 1rem;">Oups !
+            Page égarée</h1>
+        <p
+            style="color: var(--bb-text-muted); font-size: 1rem; line-height: 1.6; margin-bottom: 2.5rem; max-width: 24rem; margin-inline: auto;">
+            Il semble que le chemin que vous avez emprunté n'existe pas ou a été déplacé. Ne vous inquiétez pas, le
+            savoir est toujours à portée de clic.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
+            <a href="index.html" class="bb-btn bb-btn-gold" style="min-width: 16rem;">
+                <span class="material-symbols-outlined">home</span>
+                Retour à l'accueil
+            </a>
+            <button onclick="history.back()" class="bb-btn bb-btn-ghost">
+                <span class="material-symbols-outlined">arrow_back</span>
+                Page précédente
+            </button>
+        </div>
+    </div>
+</body>
+
+</html>

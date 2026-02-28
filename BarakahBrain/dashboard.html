@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>BarakahBrain — Tableau de bord</title>
+    <link rel="icon" href="assets/logo_BarakahBrain.png" type="image/png" />
+    <link rel="stylesheet" href="assets/styles.css" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
+    <style>
+        body {
+            padding-bottom: 5rem;
+        }
+
+        .dash-content {
+            max-width: 42rem;
+            margin: 0 auto;
+            padding: 1rem 1rem 2rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .dash-profile-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding-bottom: 5.5rem;
+            }
+
+            .dash-content {
+                padding: 0.75rem 0.75rem 2rem;
+                padding-left: max(0.75rem, env(safe-area-inset-left));
+                padding-right: max(0.75rem, env(safe-area-inset-right));
+            }
+
+            .dash-profile-row {
+                flex-wrap: wrap;
+            }
+        }
+
+        .progress-bar-anim {
+            animation: grow 1s ease-out forwards;
+        }
+
+        @keyframes grow {
+            from {
+                width: 0
+            }
+        }
+    </style>
+</head>
+
+<body style="background:var(--bb-bg)">
+
+    <header id="bb-header-global" data-active="dashboard"></header>
+
+    <main class="dash-content">
+        <!-- Profile Card -->
+        <section class="bb-card bb-card--gold animate-fade-in" style="margin-bottom:1.25rem;padding:1.25rem">
+            <div class="dash-profile-row">
+                <div style="position:relative">
+                    <div class="bb-avatar bb-avatar--xl" id="userAvatar">?</div>
+                    <div style="position:absolute;bottom:0;right:0;background:var(--bb-primary);color:var(--bb-gold);font-size:.625rem;font-weight:800;padding:.2rem .45rem;border-radius:var(--bb-radius-full);letter-spacing:.04em;border:2px solid var(--bb-bg)"
+                        data-i18n="role_pro">
+                        PRO</div>
+                </div>
+                <div style="flex:1">
+                    <h2 id="userName" style="font-size:1.25rem;font-weight:800;font-family:var(--font-display)">
+                        Chargement...</h2>
+                    <div id="userHandle"
+                        style="font-size:.75rem;color:var(--bb-text-subtle);font-weight:600;margin-bottom:.25rem">@...
+                    </div>
+                    <div
+                        style="display:flex;align-items:center;gap:.375rem;color:var(--bb-gold);font-size:.8125rem;font-weight:600;margin:.25rem 0">
+                        <span class="material-symbols-outlined" style="font-size:1rem">military_tech</span>
+                        <span id="userRole" data-i18n="role_player">Joueur</span>
+                    </div>
+                    <p style="font-size:.75rem;color:var(--bb-text-subtle);font-weight:500">BarakahBrain Explorer</p>
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:1.25rem">
+                <div class="bb-stat-card" style="padding:1rem">
+                    <div class="bb-stat-card__label" data-i18n="score_total">Score Total</div>
+                    <div class="bb-stat-card__value text-gold" style="font-size:1.5rem"><span id="userScore">--</span>
+                        <span style="font-size:.75rem;font-weight:400;color:var(--bb-text-muted)"
+                            data-i18n="stat_points">pts</span>
+                    </div>
+                </div>
+                <div class="bb-stat-card" style="padding:1rem">
+                    <div class="bb-stat-card__label" data-i18n="global_rank">Rang Global</div>
+                    <div class="bb-stat-card__value" style="font-size:1.5rem;color:#5db87a">#42</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Grid -->
+        <section
+            style="display:grid;grid-template-columns:repeat(auto-fit, minmax(14rem, 1fr));gap:.75rem;margin-bottom:1.25rem">
+            <div class="bb-stat-card animate-fade-in anim-delay-1">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
+                    <div
+                        style="background:var(--bb-primary-light);border-radius:var(--bb-radius-sm);padding:.4rem;display:flex">
+                        <span class="material-symbols-outlined"
+                            style="color:var(--bb-gold);font-size:1.2rem">target</span>
+                    </div>
+                    <span class="bb-badge bb-badge--green">+2.5%</span>
+                </div>
+                <div class="bb-stat-card__label" data-i18n="avg_accuracy">Précision</div>
+                <div class="bb-stat-card__value" style="font-size:1.375rem">88%</div>
+            </div>
+            <div class="bb-stat-card animate-fade-in anim-delay-2">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
+                    <div
+                        style="background:var(--bb-primary-light);border-radius:var(--bb-radius-sm);padding:.4rem;display:flex">
+                        <span class="material-symbols-outlined"
+                            style="color:var(--bb-gold);font-size:1.2rem">quiz</span>
+                    </div>
+                    <span class="bb-badge bb-badge--gold">Top 5%</span>
+                </div>
+                <div class="bb-stat-card__label" data-i18n="quizzes_done">Quiz Complétés</div>
+                <div class="bb-stat-card__value" style="font-size:1.375rem">142</div>
+            </div>
+        </section>
+
+        <!-- Progress Chart -->
+        <section class="bb-card animate-fade-in anim-delay-2" style="margin-bottom:1.25rem">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem">
+                <h3 style="font-size:.9375rem;font-weight:700" data-i18n="your_progress">Votre Progression</h3>
+                <select class="bb-select" style="width:auto;padding:.375rem .875rem .375rem .5rem;font-size:.75rem">
+                    <option>7 derniers jours</option>
+                    <option>30 derniers jours</option>
+                </select>
+            </div>
+            <div style="display:flex;align-items:flex-end;gap:.35rem;height:5.5rem;padding:0 .25rem">
+                <div style="flex:1;background:var(--bb-primary-light);border-radius:2px 2px 0 0;height:40%"></div>
+                <div style="flex:1;background:var(--bb-primary-light);border-radius:2px 2px 0 0;height:65%"></div>
+                <div style="flex:1;background:var(--bb-primary-light);border-radius:2px 2px 0 0;height:50%"></div>
+                <div style="flex:1;background:var(--bb-primary-light);border-radius:2px 2px 0 0;height:82%"></div>
+                <div
+                    style="flex:1;background:var(--bb-primary);border-radius:2px 2px 0 0;height:100%;position:relative">
+                    <span
+                        style="position:absolute;top:-1.4rem;left:50%;transform:translateX(-50%);font-size:.625rem;font-weight:800;background:var(--bb-gold);color:#060c1a;padding:.15rem .4rem;border-radius:3px;white-space:nowrap">92%</span>
+                </div>
+                <div style="flex:1;background:var(--bb-primary-light);border-radius:2px 2px 0 0;height:60%"></div>
+                <div style="flex:1;background:var(--bb-primary-light);border-radius:2px 2px 0 0;height:72%"></div>
+            </div>
+            <div
+                style="display:flex;justify-content:space-between;margin-top:.5rem;font-size:.625rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--bb-text-subtle)">
+                <span data-i18n="day_mon">LUN</span><span data-i18n="day_tue">MAR</span><span
+                    data-i18n="day_wed">MER</span><span data-i18n="day_thu">JEU</span><span
+                    data-i18n="day_fri">VEN</span><span data-i18n="day_sat">SAM</span><span
+                    data-i18n="day_sun">DIM</span>
+            </div>
+        </section>
+
+
+        <!-- Recent Quizzes -->
+        <section class="animate-fade-in anim-delay-3" style="margin-bottom:1.5rem">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.875rem">
+                <h3 style="font-size:.9375rem;font-weight:700;padding:.125rem" data-i18n="recent_quizzes">Derniers Quiz
+                    Joués</h3>
+                <a href="profil.html" style="color:var(--bb-gold);font-size:.8125rem;font-weight:700"
+                    data-i18n="see_all">Voir tout</a>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:.75rem">
+                <div class="bb-card" style="display:flex;align-items:center;gap:1rem;padding:.875rem">
+                    <div
+                        style="width:3rem;height:3rem;background:rgba(16,185,129,.12);border-radius:var(--bb-radius);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                        <span class="material-symbols-outlined" style="color:#34d399;font-size:1.5rem">mosque</span>
+                    </div>
+                    <div style="flex:1">
+                        <h4 style="font-size:.875rem;font-weight:700">Histoire Islamique</h4>
+                        <p style="font-size:.6875rem;color:var(--bb-text-subtle);font-weight:500;margin-top:.125rem">Il
+                            y a 2 heures • Niveau Avancé</p>
+                    </div>
+                    <div style="text-align:right">
+                        <div style="font-size:.9375rem;font-weight:800;color:#5db87a">18/20</div>
+                        <div style="font-size:.6875rem;font-weight:700;color:#34d399">90%</div>
+                    </div>
+                </div>
+                <div class="bb-card" style="display:flex;align-items:center;gap:1rem;padding:.875rem">
+                    <div
+                        style="width:3rem;height:3rem;background:rgba(212,175,55,.12);border-radius:var(--bb-radius);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                        <span class="material-symbols-outlined"
+                            style="color:var(--bb-gold);font-size:1.5rem">menu_book</span>
+                    </div>
+                    <div style="flex:1">
+                        <h4 style="font-size:.875rem;font-weight:700">Sciences &amp; Civilisation</h4>
+                        <p style="font-size:.6875rem;color:var(--bb-text-subtle);font-weight:500;margin-top:.125rem">
+                            Hier • Niveau Moyen</p>
+                    </div>
+                    <div style="text-align:right">
+                        <div style="font-size:.9375rem;font-weight:800;color:var(--bb-gold)">15/20</div>
+                        <div style="font-size:.6875rem;font-weight:700;color:var(--bb-warning)">75%</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <a href="quiz.html" class="bb-btn bb-btn-gold bb-btn-full"
+            style="height:3.5rem;font-size:1rem;border-radius:var(--bb-radius-lg)">
+            <span class="material-symbols-outlined">play_circle</span>
+            <span data-i18n="start_quiz">Commencer un nouveau Quiz</span>
+        </a>
+    </main>
+
+    <!-- Bottom Nav -->
+    <nav class="bb-bottom-nav">
+        <a href="dashboard.html" class="bb-bottom-nav__item bb-bottom-nav__item--active">
+            <span class="material-symbols-outlined">home</span>
+            <span data-i18n="nav_home">Accueil</span>
+        </a>
+        <a href="quiz.html" class="bb-bottom-nav__item">
+            <span class="material-symbols-outlined">play_circle</span>
+            <span data-i18n="nav_quiz">Jouer</span>
+        </a>
+        <a href="classement.html" class="bb-bottom-nav__item">
+            <span class="material-symbols-outlined">leaderboard</span>
+            <span data-i18n="nav_leaderboard">Classement</span>
+        </a>
+        <a href="profil.html" class="bb-bottom-nav__item">
+            <span class="material-symbols-outlined">account_circle</span>
+            <span data-i18n="nav_profile">Profil</span>
+        </a>
+    </nav>
+
+    <div id="bb-toast"></div>
+    <script src="assets/i18n.js"></script>
+    <script src="assets/layouts.js"></script>
+    <script src="assets/app.js"></script>
+    <script>
+        async function initDashboard() {
+            const token = sessionStorage.getItem('bb_token');
+            if (!token) { window.location.href = 'connexion.html'; return; }
+
+            try {
+                const response = await fetch('/api/user/profile', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!response.ok) throw new Error();
+                const user = await response.json();
+
+                document.getElementById('userName').textContent = user.fullName;
+                document.getElementById('userHandle').textContent = '@' + user.username;
+
+                const roleKey = 'role_' + user.role.toLowerCase();
+                const roleEl = document.getElementById('userRole');
+                if (roleEl) {
+                    roleEl.setAttribute('data-i18n', roleKey);
+                    roleEl.textContent = I18n.t(roleKey);
+                }
+
+                const avatar = document.getElementById('userAvatar');
+                if (user.avatar) {
+                    avatar.innerHTML = `<img src="${user.avatar}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%" />`;
+                } else {
+                    avatar.textContent = user.fullName.charAt(0).toUpperCase();
+                    avatar.style.display = 'flex';
+                    avatar.style.alignItems = 'center';
+                    avatar.style.justifyContent = 'center';
+                    avatar.style.fontSize = '1.5rem';
+                    avatar.style.fontWeight = 'bold';
+                    avatar.style.background = 'var(--bb-surface-2)';
+                }
+
+                // Stats
+                const statsRes = await fetch('/api/user/stats', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (statsRes.ok) {
+                    const stats = await statsRes.json();
+
+                    // Basic Stats
+                    document.getElementById('userScore').textContent = (stats.totalScore || 0).toLocaleString();
+                    const rankEl = document.querySelector('.dash-profile-row + div .bb-stat-card:nth-child(2) .bb-stat-card__value');
+                    if (rankEl) rankEl.textContent = '#' + (stats.rank || '-');
+
+                    const accuracyEl = document.querySelector('.bb-stat-card:nth-child(1) .bb-stat-card__value');
+                    if (accuracyEl) accuracyEl.textContent = (stats.accuracy || 0) + '%';
+
+                    const countEl = document.querySelector('.bb-stat-card.animate-fade-in.anim-delay-2 .bb-stat-card__value');
+                    if (countEl) countEl.textContent = stats.quizCount || 0;
+
+                    // Progress Chart
+                    const chartContainer = document.querySelector('section.bb-card div[style*="flex-end"]');
+                    if (chartContainer && stats.history && stats.history.length > 0) {
+                        chartContainer.innerHTML = '';
+                        // Map days of week
+                        const days = [I18n.t('day_mon'), I18n.t('day_tue'), I18n.t('day_wed'), I18n.t('day_thu'), I18n.t('day_fri'), I18n.t('day_sat'), I18n.t('day_sun')];
+
+                        // We show last 7 points
+                        stats.history.slice(-7).forEach(day => {
+                            const bar = document.createElement('div');
+                            bar.style.flex = '1';
+                            bar.style.background = 'var(--bb-primary-light)';
+                            bar.style.borderRadius = '2px 2px 0 0';
+                            bar.style.height = day.dailyAccuracy + '%';
+                            if (day.dailyAccuracy >= 80) bar.style.background = 'var(--bb-primary)';
+
+                            bar.className = 'progress-bar-anim';
+                            chartContainer.appendChild(bar);
+                        });
+                    }
+
+                    // Recent Quizzes
+                    const recentList = document.querySelector('section.animate-fade-in.anim-delay-3 div[style*="flex-direction:column"]');
+                    if (recentList && stats.recentQuizzes && stats.recentQuizzes.length > 0) {
+                        recentList.innerHTML = '';
+                        stats.recentQuizzes.forEach(q => {
+                            const dateStr = new Date(q.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
+                            const item = document.createElement('div');
+                            item.className = 'bb-card';
+                            item.style.display = 'flex';
+                            item.style.alignItems = 'center';
+                            item.style.gap = '1rem';
+                            item.style.padding = '.875rem';
+                            item.innerHTML = `
+                                <div style="width:3rem;height:3rem;background:var(--bb-primary-light);border-radius:var(--bb-radius);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                                    <span class="material-symbols-outlined" style="color:var(--bb-gold);font-size:1.5rem">history</span>
+                                </div>
+                                <div style="flex:1">
+                                    <h4 style="font-size:.875rem;font-weight:700">${q.categoryName || 'Quiz'}</h4>
+                                    <p style="font-size:.6875rem;color:var(--bb-text-subtle);font-weight:500;margin-top:.125rem">${dateStr} • Niveau ${q.difficulty}</p>
+                                </div>
+                                <div style="text-align:right">
+                                    <div style="font-size:.9375rem;font-weight:800;color:#5db87a">${q.correctAnswers}/${q.totalQuestions}</div>
+                                    <div style="font-size:.6875rem;font-weight:700;color:var(--bb-gold)">${Math.round(q.correctAnswers / q.totalQuestions * 100)}%</div>
+                                </div>
+                            `;
+                            recentList.appendChild(item);
+                        });
+                    }
+                }
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+        document.addEventListener('DOMContentLoaded', initDashboard);
+    </script>
+</body>
+
+</html>

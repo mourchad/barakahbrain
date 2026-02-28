@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BarakahBrain — Maintenance en cours</title>
+    <link rel="icon" href="assets/logo_BarakahBrain.png" type="image/png" />
+    <link rel="stylesheet" href="assets/styles.css" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .maintenance-container {
+            max-width: 32rem;
+            width: 100%;
+        }
+
+        .maintenance-icon {
+            font-size: 5rem;
+            color: var(--bb-gold);
+            margin-bottom: 2rem;
+            display: inline-block;
+            animation: pulse-gold 3s infinite ease-in-out;
+        }
+
+        @keyframes pulse-gold {
+            0% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 0 rgba(212, 175, 55, 0));
+            }
+
+            50% {
+                transform: scale(1.05);
+                filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.4));
+            }
+
+            100% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 0 rgba(212, 175, 55, 0));
+            }
+        }
+    </style>
+</head>
+
+<body class="bb-bg-pattern">
+    <div class="maintenance-container">
+        <div class="bb-glass" style="padding: 3rem; border-radius: var(--bb-radius-xl);">
+            <div style="margin-bottom: 1.5rem; text-align: left;">
+                <a href="index.html" class="bb-btn bb-btn-ghost bb-btn-sm"
+                    style="gap: 0.4rem; color: var(--bb-text-muted)" data-i18n="maintenance_site_back">
+                    <span class="material-symbols-outlined" style="font-size: 1.1rem">arrow_back</span>
+                    Retour au site
+                </a>
+            </div>
+            <span class="material-symbols-outlined maintenance-icon">construction</span>
+            <h1 style="font-family: var(--font-display); font-size: 2.25rem; font-weight: 900; margin-bottom: 1rem; color: var(--bb-gold);"
+                data-i18n="maintenance_title">Maintenance en cours</h1>
+            <p style="color: var(--bb-text-muted); font-size: 1.125rem; line-height: 1.6; margin-bottom: 2.5rem;"
+                data-i18n="maintenance_desc">
+                Nous peaufinons les derniers détails pour vous offrir une expérience d'apprentissage d'excellence.
+                BarakahBrain sera de retour très bientôt.
+            </p>
+
+            <div style="margin-bottom: 1.5rem;">
+                <a href="dashboard.html" class="bb-btn bb-btn-ghost bb-btn-sm" style="gap: 0.4rem;"
+                    data-i18n="quiz_back_home">
+                    <span class="material-symbols-outlined" style="font-size: 1.1rem">arrow_back</span>
+                    Retour au tableau de bord
+                </a>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <button onclick="window.location.reload()" class="bb-btn bb-btn-gold bb-btn-full">
+                    <span class="material-symbols-outlined">refresh</span>
+                    <span data-i18n="maintenance_check_btn">Vérifier la disponibilité</span>
+                </button>
+                <a href="contact.html" class="bb-btn bb-btn-outline bb-btn-full">
+                    <span class="material-symbols-outlined">support_agent</span>
+                    <span data-i18n="faq_contact_btn">Contacter le support</span>
+                </a>
+            </div>
+
+            <p style="margin-top: 2rem; font-size: 0.75rem; color: var(--bb-text-subtle); text-transform: uppercase; letter-spacing: 0.1em;"
+                data-i18n="maintenance_optimizing">
+                Système en cours d'optimisation par l'équipe BarakahBrain
+            </p>
+        </div>
+    </div>
+
+    <script src="assets/app.js"></script>
+    <script>
+        // Optional: Check API to auto-redirect back to dashboard if maintenance is over
+        async function checkStatus() {
+            try {
+                const res = await fetch('/api/settings');
+                const settings = await res.json();
+                if (!settings.maintenanceMode) {
+                    window.location.href = 'index.html';
+                }
+            } catch (e) { }
+        }
+        setInterval(checkStatus, 10000); // Check every 10 seconds
+    </script>
+</body>
+
+</html>
