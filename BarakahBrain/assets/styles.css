@@ -576,6 +576,20 @@ h6 {
   flex-shrink: 0;
 }
 
+/* icon-style helpers ------------------------------------------------ */
+.bb-icon-btn,
+.bb-hamburger {
+  /* ensure icons contrast against dark header */
+  color: var(--bb-text);
+}
+
+.bb-icon-btn {
+  background: transparent;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
 .bb-hamburger {
   display: none;
   margin-left: 0.5rem;
