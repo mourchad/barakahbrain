@@ -281,19 +281,38 @@ function checkAdminDashboard() {
 }
 
 // ── Global Error / Maintenance Handler ───────────────────────────────
-// We monkeypatch fetch to handle maintenance redirects globally
+// Enhanced global fetch wrapper:
+// - If a request URL starts with `/api/` and `window.API_BASE` is defined,
+//   the request will be prefixed with that base (useful when frontend and
+//   API are hosted on different domains, e.g. Render).
+// - Handles maintenance (503) redirects as before and logs fetch errors.
 const originalFetch = window.fetch;
 window.fetch = async (...args) => {
     try {
+        // Normalize args[0] to a string URL if Request provided
+        let url = args[0];
+        if (typeof url !== 'string' && url && url.url) url = url.url;
+
+        if (typeof url === 'string' && url.startsWith('/api/')) {
+            const base = (window.API_BASE || '').replace(/\/$/, '');
+            if (base) {
+                args[0] = base + url;
+            }
+            // otherwise leave as relative URL (works when API is on same origin)
+        }
+
         const response = await originalFetch(...args);
+
         if (response.status === 503 && !window.location.pathname.includes('maintenance.html')) {
-            const data = await response.clone().json();
-            if (data.maintenance) {
+            const data = await response.clone().json().catch(() => null);
+            if (data && data.maintenance) {
                 window.location.href = (window.location.pathname.includes('/admin/') ? '../' : '') + 'maintenance.html';
             }
         }
+
         return response;
     } catch (err) {
+        console.error('Fetch error:', err);
         throw err;
     }
 };
