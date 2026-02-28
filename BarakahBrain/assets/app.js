@@ -286,6 +286,15 @@ function checkAdminDashboard() {
 //   the request will be prefixed with that base (useful when frontend and
 //   API are hosted on different domains, e.g. Render).
 // - Handles maintenance (503) redirects as before and logs fetch errors.
+// If `window.API_BASE` wasn't injected into the page, allow a safe fallback
+// to pick the base URL from a meta tag: <meta name="api-base" content="https://...">
+if (!window.API_BASE) {
+    try {
+        const meta = document.querySelector('meta[name="api-base"]');
+        if (meta && meta.content) window.API_BASE = meta.content.replace(/\/$/, '');
+    } catch (e) { /* no-op */ }
+}
+
 const originalFetch = window.fetch;
 window.fetch = async (...args) => {
     try {
