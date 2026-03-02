@@ -60,10 +60,10 @@ const BARAKAH_LAYOUT = {
 
     getFooter() {
         return `
-            <footer class="bb-page-footer" style="background:var(--bb-bg);border-top:1px solid var(--bb-border);padding:5rem 1.5rem; position: relative; overflow: hidden;">
+            <footer class="bb-page-footer" style="background:var(--bb-bg);border-top:1px solid var(--bb-border);padding:2.5rem 1.5rem; position: relative; overflow: hidden;">
                 <div class="hero-glow-2" style="opacity: 0.05; bottom: -10%; right: -10%;"></div>
                 <div style="max-width:64rem;margin:0 auto; position: relative; z-index: 2;">
-                    <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:4rem">
+                    <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:2rem">
                         <div style="max-width: 20rem;">
                             <a href="index.html" class="bb-header__brand" style="margin-bottom: 1.5rem;">
                                 <img src="assets/logo_BarakahBrain.png" alt="BarakahBrain" style="width: 2.5rem; height: 2.5rem;" />
@@ -88,7 +88,7 @@ const BARAKAH_LAYOUT = {
                             </div>
                         </div>
                     </div>
-                    <div style="margin-top:4rem; padding-top: 2rem; border-top: 1px solid var(--bb-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    <div style="margin-top:2rem; padding-top: 1.5rem; border-top: 1px solid var(--bb-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                         <p style="font-size:.75rem;color:var(--bb-text-subtle)">© 2025 BarakahBrain. <span data-i18n="footer_rights">Tous droits réservés.</span></p>
                         <div style="display: flex; gap: 1.5rem;">
                             <span style="font-size: 0.7rem; font-weight: 600; color: var(--bb-text-subtle); display: flex; align-items: center; gap: 0.5rem;">
