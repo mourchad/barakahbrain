@@ -23,8 +23,9 @@ COPY . .
 # ensure writable database directory and drop root ownership
 RUN mkdir -p /data && chown -R node:node /usr/src/app /data
 
-# make /data a volume so Railway (or other hosts) can mount it
-VOLUME ["/data"]
+# note: Railway forbids the VOLUME instruction in Dockerfiles —
+# volumes must be configured in the Railway UI. We keep the
+# directory creation and ownership so the container can write to it.
 
 # run as an unprivileged user for security
 USER node
