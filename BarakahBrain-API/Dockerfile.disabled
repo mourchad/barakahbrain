@@ -1,3 +1,7 @@
+#!/bin/sh
+# Original Dockerfile preserved and disabled so Railway will use its
+# Node.js buildpack. Rename back to `Dockerfile` if you need to force
+# Docker builds again.
 # simple Dockerfile for BarakahBrain API
 # use a node base with Alpine for small size; switch to "-slim" if
 # native compilation dependencies give trouble.
