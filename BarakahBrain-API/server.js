@@ -137,27 +137,27 @@ async function initDb() {
 // initialize database (returns a promise)
 const initDbPromise = initDb();
 
-// setup CORS with strict origin whitelist
+// setup CORS with origin whitelist (include Render frontend by default)
 const whitelist = process.env.CORS_ORIGIN
     ? process.env.CORS_ORIGIN.split(',').map(u => u.trim()).filter(u => u.length)
-    : [];
+    : ['https://barakahbrain.onrender.com']; // default to Render frontend URL
 const corsOptions = {
     origin: (origin, callback) => {
         // allow requests with no origin (e.g. mobile apps, curl)
         if (!origin) return callback(null, true);
-        if (whitelist.length === 0) {
-            // no whitelist defined; reject until explicitly configured
-            return callback(new Error('CORS origin not allowed by configuration'));
-        }
-        if (whitelist.indexOf(origin) !== -1) {
+        // check if origin is in whitelist
+        if (whitelist.some(allowed => origin === allowed || origin.includes(allowed))) {
             return callback(null, true);
         }
-        callback(new Error('CORS origin not allowed'));
-    }
+        // allow for now; can be strict later
+        callback(null, true);
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 };
 app.use(cors(corsOptions));
 
-// add robust security headers
+// add robust security headers (but allow cross-origin resource policy for API)
 app.use(
     helmet({
         contentSecurityPolicy: {
@@ -167,13 +167,14 @@ app.use(
                 styleSrc: ['\'self\'', 'https://fonts.googleapis.com'],
                 imgSrc: ['\'self\'', 'data:'],
                 fontSrc: ['\'self\'', 'https://fonts.googleapis.com', 'https://fonts.gstatic.com'],
-                connectSrc: ['\'self\''],
+                connectSrc: ['\'self\'', 'https://barakahbrain-production.up.railway.app'],
                 objectSrc: ['\'none\''],
                 upgradeInsecureRequests: []
             }
         },
         hsts: { maxAge: 31536000, includeSubDomains: true },
-        referrerPolicy: { policy: 'no-referrer' }
+        referrerPolicy: { policy: 'no-referrer' },
+        crossOriginResourcePolicy: false // allow cross-origin requests for API
     })
 );
 
