@@ -28,22 +28,58 @@ const Toast = {
 
 // ── Modal ─────────────────────────────────────────────────────────────
 const Modal = {
-    show({ title = '', body = '', confirmLabel = 'Confirmer', cancelLabel = 'Annuler', onConfirm = null, danger = false }) {
+    show({ title = '', body = '', confirmLabel = 'Confirmer', cancelLabel = 'Annuler', onConfirm = null, danger = false, isHtml = true }) {
         const backdrop = document.createElement('div');
         backdrop.className = 'bb-modal-backdrop';
-        backdrop.innerHTML = `
-      <div class="bb-modal" role="dialog" aria-modal="true">
-        <h3 style="font-family:var(--font-display);font-size:1.25rem;font-weight:700;margin-bottom:0.75rem">${title}</h3>
-        <p style="color:var(--bb-text-muted);font-size:0.9375rem;margin-bottom:1.5rem">${body}</p>
-        <div style="display:flex;gap:0.75rem;justify-content:flex-end">
-          <button class="bb-btn bb-btn-ghost" id="bb-modal-cancel">${cancelLabel}</button>
-          <button class="bb-btn ${danger ? 'bb-btn-danger' : 'bb-btn-gold'}" id="bb-modal-confirm">${confirmLabel}</button>
-        </div>
-      </div>
-    `;
+        backdrop.style.padding = '1rem';
+        
+        const modal = document.createElement('div');
+        modal.className = 'bb-modal';
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-modal', 'true');
+        modal.style.maxHeight = '90vh';
+        modal.style.overflowY = 'auto';
+        
+        const titleEl = document.createElement('h3');
+        titleEl.style.cssText = 'font-family:var(--font-display);font-size:1.25rem;font-weight:700;margin-bottom:0.75rem';
+        titleEl.textContent = title;
+        
+        const bodyEl = document.createElement('div');
+        if (isHtml) {
+            bodyEl.innerHTML = body;
+        } else {
+            bodyEl.textContent = body;
+            bodyEl.style.cssText = 'color:var(--bb-text-muted);font-size:0.9375rem;margin-bottom:1.5rem';
+        }
+        
+        const actions = document.createElement('div');
+        actions.style.cssText = 'display:flex;gap:0.75rem;justify-content:flex-end;flex-wrap:wrap;margin-top:1.5rem';
+        actions.setAttribute('role', 'toolbar');
+        
+        const cancelBtn = document.createElement('button');
+        cancelBtn.className = 'bb-btn bb-btn-ghost';
+        cancelBtn.id = 'bb-modal-cancel';
+        cancelBtn.textContent = cancelLabel;
+        cancelBtn.style.flex = '0 1 auto';
+        
+        const confirmBtn = document.createElement('button');
+        confirmBtn.className = `bb-btn ${danger ? 'bb-btn-danger' : 'bb-btn-gold'}`;
+        confirmBtn.id = 'bb-modal-confirm';
+        confirmBtn.textContent = confirmLabel;
+        confirmBtn.style.flex = '0 1 auto';
+        
+        actions.appendChild(cancelBtn);
+        actions.appendChild(confirmBtn);
+        
+        modal.appendChild(titleEl);
+        modal.appendChild(bodyEl);
+        modal.appendChild(actions);
+        backdrop.appendChild(modal);
+        
         document.body.appendChild(backdrop);
-        backdrop.querySelector('#bb-modal-cancel').onclick = () => backdrop.remove();
-        backdrop.querySelector('#bb-modal-confirm').onclick = () => { onConfirm && onConfirm(); backdrop.remove(); };
+        
+        cancelBtn.onclick = () => backdrop.remove();
+        confirmBtn.onclick = () => { onConfirm && onConfirm(); backdrop.remove(); };
         backdrop.onclick = e => { if (e.target === backdrop) backdrop.remove(); };
     }
 };
