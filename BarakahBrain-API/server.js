@@ -787,6 +787,51 @@ app.get('/api/settings', async (req, res) => {
     res.json(settings);
 });
 
+// --- ADMIN SEED ENDPOINT ---
+app.post('/api/admin/seed-curriculum', authenticateToken, authorize(['Superadmin1']), async (req, res) => {
+    try {
+        // Seed categories
+        const cats = [
+            { id: 1, name: 'Tawhid' },
+            { id: 2, name: 'Sira' },
+            { id: 3, name: 'Fiqh' },
+            { id: 4, name: 'Hadith' }
+        ];
+        for (const cat of cats) {
+            await dbRun('INSERT OR IGNORE INTO categories_quiz (id, name) VALUES (?, ?)', [cat.id, cat.name]);
+        }
+
+        // Seed questions from curriculum
+        const questions = [
+            // SIRA Phase 3
+            { q: "Comment s'appelle l'endroit où le Prophète (SWS) et Abu Bakr se sont cachés pendant l'Hégire ?", o: ["La grotte de Hira", "La grotte de Thawr", "La grotte de Uhud", "Le mont Arafat"], c: 1, p: 3, diff: 2, cat: 2, exp: "Ils y restèrent 3 nuits. Le Coran y fait allusion." },
+            { q: "Quel acte le Prophète (SWS) a-t-il accompli immédiatement en arrivant à Quba ?", o: ["Il a déclaré la guerre", "Il a construit une mosquée", "Il a ouvert un marché", "Il est parti vers Médine sans s'arrêter"], c: 1, p: 3, diff: 1, cat: 2, exp: "La mosquée de Quba est la première mosquée construite en Islam." },
+            { q: "Comment appelait-on les habitants de Médine qui ont accueilli les musulmans de la Mecque ?", o: ["Les Muhajirun", "Les Ansar", "Les Quraysh", "Les Hawazin"], c: 1, p: 3, diff: 1, cat: 2, exp: "'Ansar' signifie les Secoureurs. Les Muhajirun sont ceux qui ont émigré." },
+            { q: "En quelle année de l'Hégire a eu lieu la grande bataille de Badr ?", o: ["1 AH", "2 AH", "3 AH", "5 AH"], c: 1, p: 3, diff: 2, cat: 2, exp: "Badr a eu lieu le 17 Ramadan de l'an 2 de l'Hégire." },
+            { q: "Quel compagnon a accompagné le Prophète (SWS) durant son voyage de l'Hégire ?", o: ["Omar ibn al-Khattab", "Abu Bakr as-Siddiq", "Ali ibn Abi Talib", "Uthman ibn Affan"], c: 1, p: 3, diff: 1, cat: 2, exp: "Abu Bakr a sacrifié tous ses biens pour cette émigration." },
+            // HADITH Phase 1
+            { q: "Que signifie le terme 'Matn' dans l'étude du Hadith ?", o: ["La chaîne de transmission", "Le texte même de la parole", "Le nom du rapporteur", "Le lieu de la révélation"], c: 1, p: 1, diff: 2, cat: 4, exp: "Un Hadith est composé de l'Isnad (la chaîne) et du Matn (le texte)." },
+            { q: "Quel est le sujet du premier Hadith des '40 Hadiths de l'Imam Nawawi' ?", o: ["La prière", "L'intention (An-Niyyah)", "L'aumône", "Le jeûne"], c: 1, p: 1, diff: 1, cat: 4, exp: "Les actions ne valent que par les intentions." },
+            { q: "Lequel de ces recueils est considéré comme le plus authentique après le Coran ?", o: ["Sahih Bukhari", "Sunan at-Tirmidhi", "Al-Muwatta", "Musnad Ahmad"], c: 0, p: 1, diff: 1, cat: 4, exp: "Sahih al-Bukhari est le livre le plus authentique." },
+            // TAWHID Phase 1
+            { q: "Quel est le premier pilier de l'Islam ?", o: ["La Zakat", "La Chahada", "La prière", "Le Hajj"], c: 1, p: 1, diff: 1, cat: 1, exp: "La Chahada est la déclaration : 'Il n'y a de dieu que Allah.'" },
+            { q: "Que signifie 'Tawhid' ?", o: ["La rémission des péchés", "L'unicité de Dieu", "La miséricorde divine", "La création du monde"], c: 1, p: 1, diff: 1, cat: 1, exp: "Tawhid signifie affirmer l'unicité absolute d'Allah." }
+        ];
+
+        for (const q of questions) {
+            await dbRun(
+                'INSERT OR IGNORE INTO questions (difficulty, phase, question, options, correct, categoryId, explanation) VALUES (?,?,?,?,?,?,?)',
+                [q.diff, q.p, q.q, JSON.stringify(q.o), q.c, q.cat, q.exp]
+            );
+        }
+
+        res.json({ message: 'Curriculum seeded successfully', count: questions.length });
+    } catch (err) {
+        console.error('[SEED] Error:', err.message);
+        res.status(500).json({ message: 'Error seeding curriculum' });
+    }
+});
+
 // global error handler (must be after all routes)
 /* eslint-disable no-unused-vars */
 app.use((err, req, res, _next) => {
