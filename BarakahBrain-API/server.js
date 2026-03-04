@@ -26,7 +26,20 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const dbPath = process.env.DB_PATH
     ? path.resolve(process.env.DB_PATH)
     : path.resolve(__dirname, 'database.sqlite');
-const db = new sqlite3.Database(dbPath);
+
+// ensure directory exists so sqlite can create file
+const fs = require('fs');
+const dbDir = path.dirname(dbPath);
+if (!fs.existsSync(dbDir)) {
+    fs.mkdirSync(dbDir, { recursive: true });
+}
+
+const db = new sqlite3.Database(dbPath, (err) => {
+    if (err) {
+        console.error('[FATAL] unable to open database file', dbPath, err.message);
+        process.exit(1);
+    }
+});
 
 // Helper for Promisify SQLite
 const dbRun = (sql, params = []) => new Promise((resolve, reject) => {
