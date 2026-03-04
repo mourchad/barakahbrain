@@ -8,6 +8,15 @@ const BARAKAH_LAYOUT = {
         const isHome = window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('BarakahBrain/');
         const prefix = isHome ? '' : 'index.html';
 
+        // Check if user is logged in and has admin role
+        const user = JSON.parse(sessionStorage.getItem('bb_user') || 'null');
+        const isAdmin = user && (user.role === 'Admin' || user.role === 'Superadmin1');
+        const adminLink = isAdmin 
+            ? (user.role === 'Superadmin1' 
+                ? '<a href="admin/superadmin1.html" class="bb-btn bb-btn-gold bb-btn-sm" style="margin-right:0.5rem;"><span class="material-symbols-outlined" style="font-size:1rem">admin_panel_settings</span> Superadmin</a>'
+                : '<a href="admin/admin-dashboard.html" class="bb-btn bb-btn-gold bb-btn-sm" style="margin-right:0.5rem;"><span class="material-symbols-outlined" style="font-size:1rem">dashboard</span> Admin</a>')
+            : '';
+
         return `
             <header class="bb-header">
                 <div class="bb-header__inner" style="max-width: 80rem; margin: 0 auto; width: 100%; display: flex; align-items: center; justify-content: space-between;">
@@ -22,13 +31,16 @@ const BARAKAH_LAYOUT = {
                         <a href="contact.html" class="bb-nav__link ${activePage === 'contact' ? 'bb-nav__link--active' : ''}">Contact</a>
                     </nav>
                     <div class="bb-header__actions">
+                        ${adminLink}
                         <div class="bb-lang-switch" title="Langue">
                             <button class="lang-btn lang-btn--active" data-lang="fr">FR</button>
                             <button class="lang-btn" data-lang="en">EN</button>
                             <button class="lang-btn" data-lang="ar">ع</button>
                         </div>
-                        <a href="connexion.html" class="bb-btn bb-btn-ghost" data-i18n="nav_login">Se connecter</a>
-                        <a href="inscription.html" class="bb-btn bb-btn-primary" data-i18n="nav_register">S'inscrire</a>
+                        ${user 
+                            ? `<a href="profil.html" class="bb-btn bb-btn-ghost" title="${user.fullName}"><span class="material-symbols-outlined">account_circle</span> ${user.fullName.split(' ')[0]}</a><a href="javascript:void(0)" onclick="sessionStorage.clear();window.location.href='index.html'" class="bb-btn bb-btn-ghost" data-i18n="nav_logout">Déconnexion</a>`
+                            : `<a href="connexion.html" class="bb-btn bb-btn-ghost" data-i18n="nav_login">Se connecter</a><a href="inscription.html" class="bb-btn bb-btn-primary" data-i18n="nav_register">S'inscrire</a>`
+                        }
                     </div>
                     <button type="button" class="bb-hamburger bb-icon-btn" aria-label="Menu" id="bb-nav-toggle">
                         <span class="material-symbols-outlined">menu</span>
@@ -44,6 +56,7 @@ const BARAKAH_LAYOUT = {
                     <a href="classement.html" class="bb-nav__link" data-i18n="nav_leaderboard_page">Classement</a>
                     <a href="faq.html" class="bb-nav__link" data-i18n="nav_faq">FAQ</a>
                     <a href="contact.html" class="bb-nav__link" data-i18n="nav_contact">Contact</a>
+                    ${isAdmin ? `<a href="${user.role === 'Superadmin1' ? 'admin/superadmin1.html' : 'admin/admin-dashboard.html'}" class="bb-nav__link" style="color:var(--bb-gold);font-weight:700">${user.role === 'Superadmin1' ? 'Superadmin' : 'Admin'}</a>` : ''}
                 </nav>
                 <div class="bb-header__actions">
                     <div class="bb-lang-switch">
@@ -51,8 +64,10 @@ const BARAKAH_LAYOUT = {
                         <button class="lang-btn" data-lang="en">EN</button>
                         <button class="lang-btn" data-lang="ar">ع</button>
                     </div>
-                    <a href="connexion.html" class="bb-btn bb-btn-ghost bb-btn-full" data-i18n="nav_login">Se connecter</a>
-                    <a href="inscription.html" class="bb-btn bb-btn-primary bb-btn-full" data-i18n="nav_register">S'inscrire</a>
+                    ${user 
+                        ? `<a href="profil.html" class="bb-btn bb-btn-ghost bb-btn-full" data-i18n="nav_profile">Mon Profil</a><a href="javascript:void(0)" onclick="sessionStorage.clear();window.location.href='index.html'" class="bb-btn bb-btn-ghost bb-btn-full" data-i18n="nav_logout">Déconnexion</a>`
+                        : `<a href="connexion.html" class="bb-btn bb-btn-ghost bb-btn-full" data-i18n="nav_login">Se connecter</a><a href="inscription.html" class="bb-btn bb-btn-primary bb-btn-full" data-i18n="nav_register">S'inscrire</a>`
+                    }
                 </div>
             </div>
         `;
