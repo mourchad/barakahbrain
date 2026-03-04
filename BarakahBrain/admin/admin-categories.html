@@ -479,12 +479,24 @@
                     throw new Error(error.message || 'Erreur');
                 }
 
-                showAlert(
-                    currentEditingId ? 'Catégorie modifiée avec succès' : 'Catégorie ajoutée avec succès',
-                    'success'
-                );
-                closeModal();
-                loadCategories();
+                const isNew = !currentEditingId;
+                const message = isNew ? 'Catégorie ajoutée avec succès' : 'Catégorie modifiée avec succès';
+                
+                if (isNew) {
+                    showAlert(message + ' — ' + name, 'success');
+                    closeModal();
+                    loadCategories();
+                    // Offer to add questions immediately
+                    setTimeout(() => {
+                        if (confirm('Voulez-vous ajouter des questions à cette catégorie maintenant ?')) {
+                            window.location.href = 'admin-questions.html';
+                        }
+                    }, 1500);
+                } else {
+                    showAlert(message, 'success');
+                    closeModal();
+                    loadCategories();
+                }
             } catch (err) {
                 showAlert(err.message, 'error');
             }
