@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>BarakahBrain Admin — Gestion des Catégories</title>
+    <link rel="icon" href="../assets/logo_BarakahBrain.png" type="image/png" />
+    <link rel="stylesheet" href="../assets/styles.css" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
+    <meta name="api-base" content="https://barakahbrain-production.up.railway.app">
+    <style>
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-table tr:hover {
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: var(--bb-card-bg);
+            margin: 5% auto;
+            padding: 2rem;
+            border: 1px solid var(--bb-border);
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--bb-text-muted);
+            transition: color 0.2s ease;
+        }
+
+        .close-modal:hover {
+            color: var(--bb-text);
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--bb-border);
+            border-radius: 4px;
+            background: var(--bb-input-bg);
+            color: var(--bb-text);
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--bb-gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--bb-text-subtle);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid var(--bb-border);
+            border-top-color: var(--bb-gold);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideDown 0.3s ease;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 0.375rem 0.75rem;
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--bb-gold);
+            border-radius: 4px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body style="background:var(--bb-bg)">
+    <div class="bb-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <aside class="bb-sidebar" id="mainSidebar">
+        <div class="bb-sidebar__brand">
+            <img src="../assets/logo_BarakahBrain.png" alt="BarakahBrain" />
+            <div class="bb-header__brand">
+                <span class="bb-header__name">BarakahBrain</span>
+            </div>
+        </div>
+        <nav class="bb-sidebar__nav">
+            <div class="bb-sidebar__section">Général</div>
+            <a href="admin-dashboard.html" class="bb-sidebar__link">
+                <span class="material-symbols-outlined bb-sidebar__icon">dashboard</span>Tableau de bord
+            </a>
+            <a href="admin-utilisateurs.html" class="bb-sidebar__link">
+                <span class="material-symbols-outlined bb-sidebar__icon">group</span>Utilisateurs
+            </a>
+            <a href="admin-questions.html" class="bb-sidebar__link">
+                <span class="material-symbols-outlined bb-sidebar__icon">quiz</span>Questions
+            </a>
+            <a href="admin-categories.html" class="bb-sidebar__link bb-sidebar__link--active"
+                style="color:var(--bb-gold);font-weight:700">
+                <span class="material-symbols-outlined bb-sidebar__icon">category</span>Catégories
+            </a>
+            <div class="bb-sidebar__section" style="margin-top:.5rem">Système</div>
+            <a href="admin-logs.html" class="bb-sidebar__link">
+                <span class="material-symbols-outlined bb-sidebar__icon">history</span>Logs
+            </a>
+            <a href="admin-parametres.html" class="bb-sidebar__link">
+                <span class="material-symbols-outlined bb-sidebar__icon">settings</span>Paramètres
+            </a>
+            <div class="bb-sidebar__section" style="margin-top:.5rem">Accès Élevé</div>
+            <a href="superadmin1.html" class="bb-sidebar__link">
+                <span class="material-symbols-outlined bb-sidebar__icon" style="color:var(--bb-gold)">shield_person</span>
+                <span style="color:var(--bb-gold);font-weight:700">Superadmin1</span>
+            </a>
+            <a href="superadmin-stats.html" class="bb-sidebar__link">
+                <span class="material-symbols-outlined bb-sidebar__icon">monitoring</span>Stats Globales
+            </a>
+        </nav>
+        <div class="bb-sidebar__footer">
+            <div class="bb-sidebar__user">
+                <div class="bb-avatar bb-avatar--sm" id="adminAvatar" style="border-color:var(--bb-gold)">?</div>
+                <div style="flex:1;min-width:0">
+                    <div class="bb-sidebar__user-name truncate" id="adminName">Chargement...</div>
+                    <div class="bb-sidebar__user-role" id="adminRole">Admin</div>
+                </div>
+                <button onclick="confirmLogout()" class="bb-icon-btn" title="Déconnexion">
+                    <span class="material-symbols-outlined" style="font-size:1.1rem">logout</span>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <div class="bb-main">
+        <div class="bb-topbar">
+            <div style="display:flex;align-items:center;gap:1rem">
+                <button class="bb-hamburger bb-icon-btn" onclick="toggleSidebar()">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <h1 class="bb-topbar__title">Gestion des Catégories</h1>
+            </div>
+            <div class="bb-topbar__actions">
+                <div class="bb-lang-switch">
+                    <button class="lang-btn lang-btn--active" data-lang="fr">FR</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="ar">ع</button>
+                </div>
+                <a href="../index.html" class="bb-btn bb-btn-ghost bb-btn-sm">← Site</a>
+            </div>
+        </div>
+
+        <div class="bb-main-content">
+            <div class="bb-card">
+                <div class="bb-toolbar" style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--bb-border)">
+                    <h3 style="font-weight:700;font-size:.9375rem">Catégories de Quiz</h3>
+                    <button onclick="openAddModal()" class="bb-btn bb-btn-primary" style="gap:0.5rem">
+                        <span class="material-symbols-outlined" style="font-size:1rem">add</span>Ajouter une catégorie
+                    </button>
+                </div>
+
+                <div id="alertContainer" style="padding:1.25rem 1.5rem"></div>
+
+                <div id="loadingState" style="padding:2rem;text-align:center">
+                    <div class="loading-spinner"></div>
+                    <p style="margin-top:1rem;color:var(--bb-text-muted)">Chargement des catégories...</p>
+                </div>
+
+                <div id="categoriesList" style="display:none;padding:1.25rem 1.5rem">
+                    <table class="admin-table">
+                        <thead>
+                            <tr style="border-bottom:1px solid var(--bb-border)">
+                                <th style="text-align:left;padding:0.75rem;font-weight:600;font-size:.8125rem;text-transform:uppercase;color:var(--bb-text-subtle)">
+                                    ID
+                                </th>
+                                <th style="text-align:left;padding:0.75rem;font-weight:600;font-size:.8125rem;text-transform:uppercase;color:var(--bb-text-subtle)">
+                                    Nom de la Catégorie
+                                </th>
+                                <th style="text-align:left;padding:0.75rem;font-weight:600;font-size:.8125rem;text-transform:uppercase;color:var(--bb-text-subtle)">
+                                    Questions
+                                </th>
+                                <th style="text-align:right;padding:0.75rem;font-weight:600;font-size:.8125rem;text-transform:uppercase;color:var(--bb-text-subtle)">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="categoriesTable"></tbody>
+                    </table>
+                </div>
+
+                <div id="emptyState" style="display:none">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📂</div>
+                        <h3 style="margin-bottom:0.5rem">Aucune catégorie</h3>
+                        <p style="margin-bottom:1.5rem">Créez votre première catégorie de quiz</p>
+                        <button onclick="openAddModal()" class="bb-btn bb-btn-primary">
+                            <span class="material-symbols-outlined">add</span>Ajouter une catégorie
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div id="categoryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Ajouter une catégorie</h3>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="categoryForm" onsubmit="submitForm(event)">
+                <div class="form-group">
+                    <label for="categoryName">Nom de la catégorie *</label>
+                    <input type="text" id="categoryName" name="name" placeholder="ex: Tawhid, Hadith, Fiqh..." required />
+                </div>
+                <div class="modal-actions">
+                    <button type="button" onclick="closeModal()" class="bb-btn bb-btn-ghost">Annuler</button>
+                    <button type="submit" class="bb-btn bb-btn-primary">
+                        <span class="material-symbols-outlined">save</span><span id="submitButtonText">Ajouter</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../assets/layouts.js"></script>
+    <script src="../assets/i18n.js"></script>
+    <script>
+        const API_BASE = document.querySelector('meta[name="api-base"]')?.content || 'https://barakahbrain-production.up.railway.app';
+        let categories = [];
+        let currentEditingId = null;
+        let questionCounts = {};
+
+        async function initPage() {
+            try {
+                renderHeader('admin');
+                renderFooter();
+                loadAdminUser();
+                loadCategories();
+                initLanguageSwitcher();
+            } catch (err) {
+                console.error('Init error:', err);
+            }
+        }
+
+        function loadAdminUser() {
+            const user = JSON.parse(sessionStorage.getItem('bb_user') || 'null');
+            if (user) {
+                document.getElementById('adminName').textContent = user.fullName || 'Admin';
+                document.getElementById('adminAvatar').textContent = user.fullName?.charAt(0) || '?';
+            }
+        }
+
+        async function loadCategories() {
+            try {
+                const token = sessionStorage.getItem('bb_token');
+                if (!token) {
+                    window.location.href = '../connexion.html';
+                    return;
+                }
+
+                const response = await fetch(`${API_BASE}/api/admin/categories`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) throw new Error('Erreur lors du chargement');
+
+                categories = await response.json();
+
+                // Fetch question counts for each category
+                for (const cat of categories) {
+                    const qResp = await fetch(`${API_BASE}/api/quiz/questions?categoryId=${cat.id}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (qResp.ok) {
+                        const questions = await qResp.json();
+                        questionCounts[cat.id] = questions.length;
+                    }
+                }
+
+                renderCategories();
+            } catch (err) {
+                console.error('Load error:', err);
+                showAlert('Erreur lors du chargement des catégories', 'error');
+            }
+        }
+
+        function renderCategories() {
+            const loadingState = document.getElementById('loadingState');
+            const categoriesList = document.getElementById('categoriesList');
+            const emptyState = document.getElementById('emptyState');
+
+            loadingState.style.display = 'none';
+
+            if (categories.length === 0) {
+                categoriesList.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            categoriesList.style.display = 'block';
+
+            const tbody = document.getElementById('categoriesTable');
+            tbody.innerHTML = categories.map(cat => `
+                <tr style="border-bottom:1px solid var(--bb-border);height:3.5rem">
+                    <td style="padding:0.75rem;font-weight:600;color:var(--bb-text-muted)">#${cat.id}</td>
+                    <td style="padding:0.75rem">
+                        <span class="category-badge">${cat.name}</span>
+                    </td>
+                    <td style="padding:0.75rem;color:var(--bb-text-muted)">
+                        ${questionCounts[cat.id] || 0} questions
+                    </td>
+                    <td style="padding:0.75rem;text-align:right">
+                        <div class="admin-actions">
+                            <button onclick="openEditModal(${cat.id}, '${cat.name}')" class="bb-icon-btn" title="Modifier">
+                                <span class="material-symbols-outlined" style="font-size:1.2rem">edit</span>
+                            </button>
+                            <button onclick="deleteCategory(${cat.id})" class="bb-icon-btn" style="color:#ef4444" title="Supprimer">
+                                <span class="material-symbols-outlined" style="font-size:1.2rem">delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openAddModal() {
+            currentEditingId = null;
+            document.getElementById('categoryForm').reset();
+            document.getElementById('modalTitle').textContent = 'Ajouter une catégorie';
+            document.getElementById('submitButtonText').textContent = 'Ajouter';
+            document.getElementById('categoryModal').style.display = 'block';
+        }
+
+        function openEditModal(id, name) {
+            currentEditingId = id;
+            document.getElementById('categoryName').value = name;
+            document.getElementById('modalTitle').textContent = 'Modifier la catégorie';
+            document.getElementById('submitButtonText').textContent = 'Modifier';
+            document.getElementById('categoryModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('categoryModal').style.display = 'none';
+            currentEditingId = null;
+        }
+
+        async function submitForm(event) {
+            event.preventDefault();
+            const name = document.getElementById('categoryName').value.trim();
+
+            if (!name) {
+                showAlert('Le nom de la catégorie est requis', 'error');
+                return;
+            }
+
+            try {
+                const token = sessionStorage.getItem('bb_token');
+                const method = currentEditingId ? 'PUT' : 'POST';
+                const url = currentEditingId 
+                    ? `${API_BASE}/api/admin/categories/${currentEditingId}`
+                    : `${API_BASE}/api/admin/categories`;
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Erreur');
+                }
+
+                showAlert(
+                    currentEditingId ? 'Catégorie modifiée avec succès' : 'Catégorie ajoutée avec succès',
+                    'success'
+                );
+                closeModal();
+                loadCategories();
+            } catch (err) {
+                showAlert(err.message, 'error');
+            }
+        }
+
+        async function deleteCategory(id) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?')) {
+                return;
+            }
+
+            try {
+                const token = sessionStorage.getItem('bb_token');
+                const response = await fetch(`${API_BASE}/api/admin/categories/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || 'Erreur');
+                }
+
+                showAlert('Catégorie supprimée avec succès', 'success');
+                loadCategories();
+            } catch (err) {
+                showAlert(err.message, 'error');
+            }
+        }
+
+        function showAlert(message, type = 'info') {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `
+                <span class="material-symbols-outlined" style="font-size:1.25rem">
+                    ${type === 'success' ? 'check_circle' : 'error'}
+                </span>
+                <span>${message}</span>
+            `;
+            container.innerHTML = '';
+            container.appendChild(alert);
+
+            setTimeout(() => alert.remove(), 4000);
+        }
+
+        function toggleSidebar() {
+            document.getElementById('mainSidebar').classList.toggle('bb-sidebar--open');
+            document.getElementById('sidebarOverlay').classList.toggle('bb-sidebar-overlay--active');
+        }
+
+        function confirmLogout() {
+            if (confirm('Déconnexion ?')) {
+                sessionStorage.clear();
+                window.location.href = '../index.html';
+            }
+        }
+
+        window.addEventListener('click', (e) => {
+            const modal = document.getElementById('categoryModal');
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+
+</html>

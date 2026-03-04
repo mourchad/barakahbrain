@@ -607,6 +607,51 @@ app.post(
     }
 );
 
+app.put(
+    '/api/admin/categories/:id',
+    authenticateToken,
+    authorize(['Admin', 'Superadmin1']),
+    [body('name').notEmpty().trim().escape()],
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+        const { name } = req.body;
+        const { id } = req.params;
+        try {
+            const result = await dbRun('UPDATE categories_quiz SET name = ? WHERE id = ?', [name, id]);
+            if (result.changes === 0) {
+                return res.status(404).json({ message: 'Catégorie non trouvée' });
+            }
+            res.json({ message: 'Catégorie modifiée' });
+        } catch (err) {
+            res.status(400).json({ message: 'Erreur lors de la modification' });
+        }
+    }
+);
+
+app.delete(
+    '/api/admin/categories/:id',
+    authenticateToken,
+    authorize(['Admin', 'Superadmin1']),
+    async (req, res) => {
+        const { id } = req.params;
+        try {
+            // Check if category has questions
+            const count = await dbGet('SELECT COUNT(*) as count FROM questions WHERE categoryId = ?', [id]);
+            if (count.count > 0) {
+                return res.status(400).json({ message: 'Impossible de supprimer une catégorie contenant des questions' });
+            }
+            const result = await dbRun('DELETE FROM categories_quiz WHERE id = ?', [id]);
+            if (result.changes === 0) {
+                return res.status(404).json({ message: 'Catégorie non trouvée' });
+            }
+            res.json({ message: 'Catégorie supprimée' });
+        } catch (err) {
+            res.status(400).json({ message: 'Erreur lors de la suppression' });
+        }
+    }
+);
+
 // simplified stats route used by frontend
 app.get('/api/admin/stats', authenticateToken, authorize(['Admin', 'Superadmin1']), async (req, res) => {
     try {
