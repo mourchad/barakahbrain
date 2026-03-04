@@ -668,10 +668,13 @@
             const token = sessionStorage.getItem('bb_token');
             if (!token) { window.location.href = 'connexion.html'; return; }
 
+            const base = window.API_BASE || document.querySelector('meta[name="api-base"]')?.content || '';
+
             try {
-                const res = await fetch('/api/quiz/sections', {
+                const res = await fetch(`${base}/api/quiz/sections`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
+                if (!res.ok) throw new Error(`Sections HTTP ${res.status}`);
                 const sections = await res.json();
                 renderSections(sections);
             } catch (err) {
@@ -718,9 +721,11 @@
             container.innerHTML = `<div style="text-align:center;padding:3rem;grid-column:1/-1;white-space:nowrap">${I18n.t('quiz_loading_categories')}</div>`;
 
             try {
-                const res = await fetch('/api/quiz/categories', {
+                const base = window.API_BASE || document.querySelector('meta[name="api-base"]')?.content || '';
+                const res = await fetch(`${base}/api/quiz/categories`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
+                if (!res.ok) throw new Error(`Categories HTTP ${res.status}`);
                 const categories = await res.json();
                 renderCategories(categories);
             } catch (err) {
@@ -766,9 +771,11 @@
             container.innerHTML = `<div style="text-align:center;padding:3rem;grid-column:1/-1;white-space:nowrap">${I18n.t('quiz_loading_phases')}</div>`;
 
             try {
-                const res = await fetch(`/api/quiz/phases?sectionId=${currentDifficulty}`, {
+                const base = window.API_BASE || document.querySelector('meta[name="api-base"]')?.content || '';
+                const res = await fetch(`${base}/api/quiz/phases?sectionId=${currentDifficulty}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
+                if (!res.ok) throw new Error(`Phases HTTP ${res.status}`);
                 const phases = await res.json();
                 renderPhases(phases);
             } catch (err) {
@@ -810,9 +817,11 @@
             }
 
             try {
-                const res = await fetch(`/api/quiz/questions?difficulty=${currentDifficulty}&phase=${phaseId}&category=${encodeURIComponent(currentCategory)}`, {
+                const base = window.API_BASE || document.querySelector('meta[name="api-base"]')?.content || '';
+                const res = await fetch(`${base}/api/quiz/questions?difficulty=${currentDifficulty}&phase=${phaseId}&category=${encodeURIComponent(currentCategory)}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
+                if (!res.ok) throw new Error(`Questions HTTP ${res.status}`);
                 QUESTIONS = await res.json();
                 TOTAL = QUESTIONS.length;
                 answers = new Array(TOTAL).fill(null);
