@@ -172,21 +172,9 @@ async function initDb() {
 // initialize database (returns a promise)
 const initDbPromise = initDb();
 
-// setup CORS with origin whitelist (include Render frontend by default)
-const whitelist = process.env.CORS_ORIGIN
-    ? process.env.CORS_ORIGIN.split(',').map(u => u.trim()).filter(u => u.length)
-    : ['https://barakahbrain.onrender.com']; // default to Render frontend URL
+// setup CORS to be very permissive for the moment to fix Render -> Railway connection issues
 const corsOptions = {
-    origin: (origin, callback) => {
-        // allow requests with no origin (e.g. mobile apps, curl)
-        if (!origin) return callback(null, true);
-        // check if origin is in whitelist
-        if (whitelist.some(allowed => origin === allowed || origin.includes(allowed))) {
-            return callback(null, true);
-        }
-        // allow for now; can be strict later
-        callback(null, true);
-    },
+    origin: '*',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 };
