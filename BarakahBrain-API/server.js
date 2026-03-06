@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const fs = require('fs');
 const rateLimit = require('express-rate-limit');
 const { body, query, validationResult } = require('express-validator');
 const helmet = require('helmet');
@@ -23,17 +24,29 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 // Database setup
 // allow overriding database path via environment (for testing or other backups)
-const dbPath = process.env.DB_PATH
-    ? path.resolve(process.env.DB_PATH)
-    : path.resolve(__dirname, 'database.sqlite');
+// determine database path; prefer explicit DB_PATH but if it seems to point
+// to a container location (/data/... or other) that doesn't exist on host, fall
+// back to local file so development works out of the box.
+let dbPath;
+if (process.env.DB_PATH) {
+    const candidate = path.resolve(process.env.DB_PATH);
+    if (fs.existsSync(candidate)) {
+        dbPath = candidate;
+    } else {
+        console.warn('[WARN] DB_PATH env exists but file not found:', candidate);
+        dbPath = path.resolve(__dirname, 'database.sqlite');
+    }
+} else {
+    dbPath = path.resolve(__dirname, 'database.sqlite');
+}
 
 // ensure directory exists so sqlite can create file
-const fs = require('fs');
 const dbDir = path.dirname(dbPath);
 if (!fs.existsSync(dbDir)) {
     fs.mkdirSync(dbDir, { recursive: true });
 }
 
+console.log('[INFO] using database file', dbPath);
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
         console.error('[FATAL] unable to open database file', dbPath, err.message);
@@ -131,7 +144,6 @@ async function initDb() {
         code TEXT,
         expiresAt DATETIME
     )`);
-
     const userCount = await dbGet('SELECT COUNT(*) as count FROM utilisateurs');
     if (userCount.count === 0) {
         // create an initial superadmin; password should come from env or be generated
@@ -144,6 +156,16 @@ async function initDb() {
         );
         console.log('[SECURITY] Compte superadmin initial créé. Changez le mot de passe !');
         console.log(`Utilisateur: superadmin1 motdepasse: ${initialPassword}`);
+    }
+
+    // Ensure required categories exist
+    const requiredCategories = ['Tawhid', 'Fiqh', 'Sira'];
+    for (const catName of requiredCategories) {
+        const cat = await dbGet('SELECT id FROM categories_quiz WHERE name = ?', [catName]);
+        if (!cat) {
+            await dbRun('INSERT INTO categories_quiz (name) VALUES (?)', [catName]);
+            console.log(`[INFO] Catégorie par défaut créée : ${catName}`);
+        }
     }
 }
 
@@ -175,13 +197,13 @@ app.use(
     helmet({
         contentSecurityPolicy: {
             directives: {
-                defaultSrc: ['\'self\''],
-                scriptSrc: ['\'self\'', 'https://fonts.googleapis.com'],
-                styleSrc: ['\'self\'', 'https://fonts.googleapis.com'],
-                imgSrc: ['\'self\'', 'data:'],
-                fontSrc: ['\'self\'', 'https://fonts.googleapis.com', 'https://fonts.gstatic.com'],
-                connectSrc: ['\'self\'', 'https://barakahbrain-production.up.railway.app'],
-                objectSrc: ['\'none\''],
+                defaultSrc: ["'self'"],
+                scriptSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+                styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+                imgSrc: ["'self'", "data:"],
+                fontSrc: ["'self'", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
+                connectSrc: ["'self'", "http://localhost:*", "http://127.0.0.1:*", "https://barakahbrain-production.up.railway.app"],
+                objectSrc: ["'none'"],
                 upgradeInsecureRequests: []
             }
         },
@@ -220,6 +242,12 @@ const authorize = (roles = []) => (req, res, next) => {
     if (!roles.includes(req.user.role)) return res.status(403).json({ message: 'Accès refusé' });
     next();
 };
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+    console.log('Health check called');
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 
 // --- ROUTES AUTH ---
 
@@ -419,7 +447,8 @@ app.get('/api/user/stats', authenticateToken, async (req, res) => {
 
 // --- ROUTES QUIZ ---
 
-app.get('/api/quiz/sections', authenticateToken, (req, res) => {
+// public endpoints: no authentication required so that guests can preview quiz structure
+app.get('/api/quiz/sections', (req, res) => {
     const sections = [
         { id: 1, title: 'Débutant', icon: 'scuba_diving', color: '#10b981', desc: 'Les bases fondamentales pour tout chercheur de vérité.' },
         { id: 2, title: 'Avancé', icon: 'military_tech', color: '#3b82f6', desc: 'Approfondissez vos connaissances avec des preuves scripturaires.' },
@@ -428,7 +457,8 @@ app.get('/api/quiz/sections', authenticateToken, (req, res) => {
     res.json(sections);
 });
 
-app.get('/api/quiz/categories', authenticateToken, async (req, res) => {
+// categories should be accessible without login so the quiz UI can populate even for unauthenticated users
+app.get('/api/quiz/categories', async (req, res) => {
     try {
         const categories = await dbAll('SELECT * FROM categories_quiz');
         res.json(categories);
@@ -437,7 +467,8 @@ app.get('/api/quiz/categories', authenticateToken, async (req, res) => {
     }
 });
 
-app.get('/api/quiz/phases', authenticateToken, async (req, res) => {
+// phases list is also public
+app.get('/api/quiz/phases', async (req, res) => {
     const phases = [
         { id: 1, title: 'Phase 1', desc: 'Fondations et Concepts Clés', duration: 180, unlocked: true },
         { id: 2, title: 'Phase 2', desc: 'Applications et Contextes', duration: 180, unlocked: true },

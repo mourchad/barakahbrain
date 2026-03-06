@@ -168,7 +168,7 @@
             color: #060c1a;
         }
 
-        /* Smooth slide transition */
+        /* Transition de glissement douce */
         #question-card {
             transition: opacity .28s ease, transform .28s ease;
         }
@@ -185,7 +185,7 @@
             pointer-events: none;
         }
 
-        /* Section Selection */
+        /* Écran de sélection de section */
         #section-screen {
             display: flex;
             flex-direction: column;
@@ -243,7 +243,7 @@
             line-height: 1.5;
         }
 
-        /* Result flash on card */
+        /* Superposition de flash de résultat */
         .answer-result {
             position: absolute;
             inset: 0;
@@ -287,7 +287,7 @@
             padding: 3rem 2rem;
         }
 
-        /* Phase Selection */
+        /* Écran de sélection de phase */
         #phase-screen {
             display: none;
             flex-direction: column;
@@ -359,7 +359,7 @@
             color: var(--bb-text-muted);
         }
 
-        /* Category Selection */
+        /* Catégorie Sélection */
         #category-screen {
             display: none;
             flex-direction: column;
@@ -417,14 +417,20 @@
 
 <body class="bb-quiz-page" style="background:var(--bb-bg)">
 
-    <!-- Anti-Cheat Banner -->
+    <!-- Bannière anti-triche -->
     <div class="bb-anticheat-banner" id="bb-cheat-warning">
         <span class="material-symbols-outlined">warning</span>
         <p class="bb-anticheat-text" data-i18n="quiz_warning">ANTI-TRICHE ACTIF : Restez sur cette page. Quitter ou
             changer d'onglet vous disqualifiera.</p>
     </div>
 
-    <!-- Quiz Header -->
+    <!-- Diagnostic Overlay (Debug) -->
+    <div id="debug-overlay"
+        style="position:fixed;top:0;left:0;background:rgba(0,0,0,0.8);color:#0f0;font-family:monospace;font-size:10px;padding:5px;z-index:9999;pointer-events:none;max-height:200px;overflow:auto;display:none;">
+        DEBUG MODE ACTIVE
+    </div>
+
+    <!-- En-tête du quiz -->
     <header class="quiz-page-header"
         style="background:var(--bb-surface);border-bottom:1px solid var(--bb-border);padding:.875rem 1.5rem">
         <div class="quiz-header-inner"
@@ -448,7 +454,7 @@
         </div>
     </header>
 
-    <!-- Section Selection Screen -->
+    <!-- Écran de sélection de section -->
     <div id="section-screen">
         <div style="text-align:center">
             <h1 style="font-family:var(--font-display);font-size:2.5rem;font-weight:900;margin-bottom:1rem"
@@ -459,7 +465,7 @@
                 commencer. Chaque section contient 5 phases progressives.</p>
         </div>
         <div class="section-grid" id="sections-container">
-            <!-- Dynamically populated -->
+            <!-- Dynamiquement peuplé -->
             <div style="text-align:center;padding:3rem;grid-column:1/-1" data-i18n="quiz_loading_sections">Chargement
                 des sections...</div>
         </div>
@@ -479,11 +485,11 @@
                 pour ce quiz.</p>
         </div>
         <div class="category-grid" id="categories-container">
-            <!-- Dynamically populated -->
+            <!-- Dynamiquement peuplé -->
         </div>
     </div>
 
-    <!-- Phase Selection Screen -->
+    <!-- Écran de sélection de phase -->
     <div id="phase-screen">
         <div style="text-align:center">
             <button onclick="showCategories()" class="bb-btn bb-btn-ghost bb-btn-sm" style="margin-bottom:1.5rem">
@@ -498,13 +504,13 @@
                 ascension.</p>
         </div>
         <div class="phase-grid" id="phases-container">
-            <!-- Dynamically populated -->
+            <!-- Dynamiquement peuplé -->
         </div>
     </div>
 
-    <!-- Main Layout -->
+    <!-- Layout principal -->
     <div class="quiz-layout" id="quiz-layout">
-        <!-- Sidebar -->
+        <!-- Barre latérale -->
         <aside class="quiz-sidebar">
             <div class="bb-card" style="margin-bottom:1rem">
                 <h3 style="font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--bb-text-subtle);margin-bottom:1rem"
@@ -535,13 +541,13 @@
             </div>
         </aside>
 
-        <!-- Question Area -->
+        <!-- Zone de question -->
         <section style="display:flex;flex-direction:column;gap:1.5rem">
             <div id="question-card" class="bb-card" style="padding:2rem 2.5rem;position:relative;overflow:hidden">
                 <div
                     style="position:absolute;top:0;right:0;width:8rem;height:8rem;background:var(--bb-primary-light);border-radius:0 0 0 100%">
                 </div>
-                <!-- Result flash overlays -->
+                <!-- Superpositions de flash de résultat -->
                 <div class="answer-result answer-result--correct" id="result-correct">✓ Bonne réponse !</div>
                 <div class="answer-result answer-result--wrong" id="result-wrong">✗ Mauvaise réponse</div>
                 <div style="position:relative">
@@ -555,7 +561,7 @@
                     </h2>
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem" id="options-grid"></div>
 
-                    <!-- Explanation Card (Elite Proof) -->
+                    <!-- Carte d'explication (Preuve d'élite) -->
                     <div id="explanation-card" class="bb-card animate-fade-in"
                         style="display:none;margin-top:2rem;padding:1.25rem;background:rgba(212,175,55,0.05);border:1px solid rgba(212,175,55,0.3);position:relative;overflow:hidden">
                         <div
@@ -587,7 +593,7 @@
                 </div>
             </div>
 
-            <!-- Status Bar -->
+            <!-- Barre de statut -->
             <div
                 style="display:flex;align-items:center;justify-content:center;gap:2.5rem;color:var(--bb-text-subtle);font-size:.8125rem;font-weight:600;padding-top:.5rem;border-top:1px solid var(--bb-border)">
                 <div style="display:flex;align-items:center;gap:.5rem">
@@ -604,7 +610,7 @@
         </section>
     </div>
 
-    <!-- Finish Screen (shown after last question) -->
+    <!-- Écran de fin (affiché après la dernière question) -->
     <div id="finish-screen">
         <div
             style="width:6rem;height:6rem;border-radius:50%;background:var(--bb-primary);display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;box-shadow:0 0 3rem rgba(212,175,55,.2)">
@@ -641,14 +647,53 @@
     </footer>
 
     <div id="bb-toast"></div>
+    <script>
+        // Ultra-Debug: Catch all errors and alert them
+        window.onerror = function (msg, url, line) {
+            const errorText = "ERREUR CRITIQUE JS :\n" + msg + "\nLieu: " + url + "\nLigne: " + line;
+            console.error(errorText);
+            // alert(errorText);
+            const overlay = document.getElementById('debug-overlay');
+            if (overlay) {
+                overlay.style.display = 'block';
+                overlay.innerHTML += `<div style="color:red">[ERR] ${msg} (L${line})</div>`;
+            }
+            return false;
+        };
+
+        function debugLog(msg, color = '#0f0') {
+            console.log(msg);
+            const overlay = document.getElementById('debug-overlay');
+            if (overlay) {
+                overlay.style.display = 'block';
+                overlay.innerHTML += `<div style="color:${color}">${msg}</div>`;
+            }
+        }
+
+        debugLog("Ultra-Debug activé.");
+    </script>
     <script src="assets/i18n.js"></script>
     <script>
-        window.API_BASE = 'https://barakahbrain-production.up.railway.app';
+        // Détection intelligente de l'API_BASE
+        (function () {
+            const isLocal = window.location.hostname === 'localhost' ||
+                window.location.hostname === '127.0.0.1' ||
+                window.location.hostname === '' ||
+                window.location.protocol === 'file:';
+
+            const meta = document.querySelector('meta[name="api-base"]');
+            const prodBase = meta ? meta.content : 'https://barakahbrain-production.up.railway.app';
+
+            // Si local, on vise le port 3000 par défaut du backend
+            window.API_BASE = isLocal ? 'http://localhost:3000' : prodBase;
+            debugLog(`[ENV] API detected: ${window.API_BASE} (${isLocal ? 'LOCAL' : 'PROD'})`);
+            debugLog(`[ENV] Hostname: "${window.location.hostname}"`);
+        })();
     </script>
     <script src="assets/app.js"></script>
     <script>
         // ══════════════════════════════════════════════════════
-        //  STATE
+        //  ETAT
         // ══════════════════════════════════════════════════════
         let QUESTIONS = [];
         let TOTAL = 0;
@@ -658,6 +703,7 @@
         let answers = [];
         let currentDifficulty = 1;
         let currentCategory = null;
+        let currentCategoryId = null; // New state
         let currentPhase = 1;
         let startTime = null;
 
@@ -665,20 +711,29 @@
         //  INITIALISATION
         // ══════════════════════════════════════════════════════
         async function init() {
+            debugLog('[DEBUG] init() démarré');
             const token = sessionStorage.getItem('bb_token');
-            if (!token) { window.location.href = 'connexion.html'; return; }
+            if (!token) {
+                debugLog('[WARN] No token found, redirecting to login', "orange");
+                alert("Session expirée ou non trouvée. Redirection...");
+                window.location.href = 'connexion.html';
+                return;
+            }
 
-            const base = window.API_BASE || document.querySelector('meta[name="api-base"]')?.content || '';
+            const base = window.API_BASE || '';
+            debugLog(`[DEBUG] API_BASE utilisé: ${base || '(relatif)'}`);
 
             try {
-                const res = await fetch(`${base}/api/quiz/sections`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+                const url = `${base}/api/quiz/sections`;
+                debugLog(`[FETCH] Sections from: ${url}...`);
+                const res = await fetch(url);
+                debugLog(`[FETCH] Sections Status: ${res.status}`);
                 if (!res.ok) throw new Error(`Sections HTTP ${res.status}`);
                 const sections = await res.json();
+                debugLog(`[FETCH] Sections loaded: ${sections.length}`);
                 renderSections(sections);
             } catch (err) {
-                console.error(err);
+                debugLog(`[ERR] Init error: ${err.message}`, "red");
                 Toast.show(I18n.t('error_server'), 'error');
             }
         }
@@ -710,6 +765,7 @@
         }
 
         async function loadCategories(sectionId) {
+            debugLog(`[DEBUG] Loading categories for section: ${sectionId}`);
             currentDifficulty = sectionId;
             const token = sessionStorage.getItem('bb_token');
 
@@ -721,27 +777,40 @@
             container.innerHTML = `<div style="text-align:center;padding:3rem;grid-column:1/-1;white-space:nowrap">${I18n.t('quiz_loading_categories')}</div>`;
 
             try {
-                const base = window.API_BASE || document.querySelector('meta[name="api-base"]')?.content || '';
-                const res = await fetch(`${base}/api/quiz/categories`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+                const url = `${window.API_BASE || ''}/api/quiz/categories`;
+                debugLog(`[FETCH] Categories from: ${url}...`);
+                const res = await fetch(url);
+                debugLog(`[FETCH] Categories Status: ${res.status}`);
+
                 if (!res.ok) throw new Error(`Categories HTTP ${res.status}`);
                 const categories = await res.json();
+                debugLog(`[FETCH] Categories received: ${categories ? categories.length : 0}`);
+
+                if (!Array.isArray(categories) || categories.length === 0) {
+                    debugLog("[WARN] No categories returned from API", "orange");
+                    container.innerHTML = `<div style="text-align:center;padding:3rem;grid-column:1/-1">${I18n.t('quiz_no_categories') || 'Aucune catégorie disponible.'}</div>`;
+                    return;
+                }
+
                 renderCategories(categories);
             } catch (err) {
-                console.error(err);
+                debugLog(`[ERR] loadCategories: ${err.message}`, "red");
+                container.innerHTML = `<div style="text-align:center;padding:3rem;grid-column:1/-1;color:red">${I18n.t('error_server')}: ${err.message}</div>`;
             }
         }
 
         function renderCategories(categories) {
+            console.log('[DEBUG] Rendering categories:', categories.length);
             const container = document.getElementById('categories-container');
             container.innerHTML = '';
 
             categories.forEach(cat => {
                 const card = document.createElement('div');
                 card.className = 'category-card';
-                // Extract Arabic/Main name and translate if possible
-                const nameParts = cat.name.split('(');
+
+                // EXTRACTION DU NOM : Extraction du nom principal en arabe et traduction si possible
+                const name = cat.name || 'Sans nom';
+                const nameParts = name.split('(');
                 const displayName = nameParts[0].trim();
                 const subName = nameParts[1] ? nameParts[1].replace(')', '').trim() : '';
 
@@ -749,7 +818,8 @@
                     <div class="category-card__name">${displayName}</div>
                     ${subName ? `<div class="category-card__sub">${subName}</div>` : ''}
                 `;
-                card.onclick = () => loadPhases(cat.name);
+                // FIX: Passage de cat.id et cat.name
+                card.onclick = () => loadPhases(cat.id, name);
                 container.appendChild(card);
             });
         }
@@ -759,11 +829,13 @@
             document.getElementById('category-screen').style.display = 'flex';
         }
 
-        async function loadPhases(categoryName) {
+        async function loadPhases(categoryId, categoryName) {
             currentCategory = categoryName;
+            currentCategoryId = categoryId;
             const token = sessionStorage.getItem('bb_token');
+            const base = window.API_BASE || '';
 
-            // UI Switch
+            // Changement d'interface
             document.getElementById('category-screen').style.display = 'none';
             document.getElementById('phase-screen').style.display = 'flex';
 
@@ -771,10 +843,9 @@
             container.innerHTML = `<div style="text-align:center;padding:3rem;grid-column:1/-1;white-space:nowrap">${I18n.t('quiz_loading_phases')}</div>`;
 
             try {
-                const base = window.API_BASE || document.querySelector('meta[name="api-base"]')?.content || '';
-                const res = await fetch(`${base}/api/quiz/phases?sectionId=${currentDifficulty}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+                const url = `${base}/api/quiz/phases?sectionId=${encodeURIComponent(currentDifficulty)}`;
+                debugLog(`[FETCH] Phases from: ${url}...`);
+                const res = await fetch(url);
                 if (!res.ok) throw new Error(`Phases HTTP ${res.status}`);
                 const phases = await res.json();
                 renderPhases(phases);
@@ -792,7 +863,6 @@
                 card.className = `phase-card ${!phase.unlocked ? 'phase-card--locked' : ''}`;
                 card.innerHTML = `
                     ${!phase.unlocked ? '<span class="material-symbols-outlined phase-card__lock">lock</span>' : ''}
-                    <span class="phase-card__number">Phase ${phase.id}</span>
                     <h4 class="phase-card__title">${phase.title}</h4>
                     <p class="phase-card__desc">${phase.desc}</p>
                 `;
@@ -808,17 +878,19 @@
         async function startPhase(phaseId, duration = 30) {
             currentPhase = phaseId;
             const token = sessionStorage.getItem('bb_token');
+            const base = window.API_BASE || '';
 
             Toast.show(`Initialisation de la Phase ${phaseId}...`, 'info');
 
-            // Reset Timer to dynamic duration (default 180s per user feedback)
+            // Réinitialiser le Timer à la durée dynamique (défaut 180s par retour utilisateur)
             if (window.QuizTimer) {
                 window.QuizTimer.reset(180);
             }
 
             try {
-                const base = window.API_BASE || document.querySelector('meta[name="api-base"]')?.content || '';
-                const res = await fetch(`${base}/api/quiz/questions?difficulty=${currentDifficulty}&phase=${phaseId}&category=${encodeURIComponent(currentCategory)}`, {
+                const url = `${base}/api/quiz/questions?difficulty=${encodeURIComponent(currentDifficulty)}&phase=${encodeURIComponent(phaseId)}&categoryId=${encodeURIComponent(currentCategoryId)}`;
+                debugLog(`[FETCH] Questions from: ${url}...`);
+                const res = await fetch(url, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (!res.ok) throw new Error(`Questions HTTP ${res.status}`);
@@ -831,7 +903,7 @@
                     return;
                 }
 
-                // UI Swap
+                // Changement d'interface
                 document.getElementById('phase-screen').style.display = 'none';
                 document.getElementById('quiz-layout').style.display = 'grid';
 
@@ -913,15 +985,15 @@
         }
 
         // ══════════════════════════════════════════════════════
-        //  TRANSITION ENGINE
+        //  MOTEUR DE TRANSITION
         // ══════════════════════════════════════════════════════
         function nextQuestion(resultState) {
-            // Update dot for answered question
+            // Mettre à jour le point pour la question répondue
             setDot(currentIdx, resultState);
             if (resultState === 'correct') { score += 50; flashResult('correct'); }
             else if (resultState === 'wrong') { flashResult('wrong'); }
 
-            // Slide current card out
+            // Glisser la carte actuelle
             const card = document.getElementById('question-card');
             card.classList.add('leaving');
 
@@ -929,7 +1001,7 @@
                 currentIdx++;
                 if (currentIdx >= TOTAL) { finishQuiz(); return; }
 
-                // Load next question, then slide in
+                // Charger la question suivante, puis glisser
                 card.classList.remove('leaving');
                 card.classList.add('entering');
                 renderQuestion(currentIdx);
@@ -953,7 +1025,7 @@
 
             const validateBtn = document.getElementById('validate-btn');
 
-            // If button is in "Continue" mode, move to next question
+            // Si le bouton est en mode "Continuer", passer à la question suivante
             if (validateBtn.getAttribute('data-mode') === 'continue') {
                 resetValidationState();
                 nextQuestion(answers[currentIdx]);
@@ -971,7 +1043,7 @@
                     if (isCorrect) {
                         nextQuestion('correct');
                     } else {
-                        // Wrong answer: show explanation and wait
+                        // fausse réponse : afficher l'explication et attendre
                         showEducationalFeedback(question.explanation);
                     }
                 }
@@ -983,19 +1055,19 @@
             const explanationCard = document.getElementById('explanation-card');
             const explanationText = document.getElementById('explanation-text');
 
-            // Signal error visually
+            // Signaler l'erreur visuellement
             flashResult('wrong');
             document.querySelectorAll('.bb-option--selected').forEach(el => el.classList.add('bb-option--wrong'));
 
-            // Highlight the correct option
+            // Mettre en évidence la bonne réponse
             const correctOptionIdx = QUESTIONS[currentIdx].correct;
             document.querySelectorAll('.bb-option')[correctOptionIdx].classList.add('bb-option--correct');
 
-            // Show explanation
+            // Afficher l'explication
             explanationText.textContent = explanation || "L'explication détaillée sera bientôt disponible.";
             explanationCard.style.display = 'block';
 
-            // Change button to "Continue"
+            // Changer le bouton en "Continuer"
             validateBtn.innerHTML = `<span>Continuer</span> <span class="material-symbols-outlined">arrow_forward</span>`;
             validateBtn.setAttribute('data-mode', 'continue');
             validateBtn.classList.remove('bb-btn-gold');
@@ -1045,10 +1117,13 @@
             const timeTaken = Math.round((Date.now() - startTime) / 1000);
 
             const token = sessionStorage.getItem('bb_token');
+            const base = window.API_BASE || '';
 
-            // Persist to Backend
+            // Persistance vers le Backend
             try {
-                await fetch('/api/quiz/submit', {
+                const url = `${base}/api/quiz/submit`;
+                debugLog(`[FETCH] Submit from: ${url}...`);
+                await fetch(url, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1060,12 +1135,13 @@
                         totalQuestions: TOTAL,
                         difficulty: currentDifficulty,
                         phase: currentPhase,
+                        categoryId: currentCategoryId, // Correctly pass categoryId
                         temps_passe: timeTaken
                     })
                 });
             } catch (e) { console.error("Score persist error:", e); }
 
-            // Persist locally for results page
+            // Persistance locale pour la page de résultats
             sessionStorage.setItem('bb_quiz_result', JSON.stringify({
                 correct, wrong, skipped,
                 score: finalScore,
@@ -1084,7 +1160,7 @@
             setTimeout(() => { window.location.href = 'resultats.html'; }, 4000);
         }
 
-        // Launch
+        // lancement
         init();
     </script>
 </body>
