@@ -655,8 +655,8 @@
             // alert(errorText);
             const overlay = document.getElementById('debug-overlay');
             if (overlay) {
-                overlay.style.display = 'block';
-                overlay.innerHTML += `<div style="color:red">[ERR] ${msg} (L${line})</div>`;
+                // overlay.style.display = 'block';
+                // overlay.innerHTML += `<div style="color:red">[ERR] ${msg} (L${line})</div>`;
             }
             return false;
         };
@@ -665,8 +665,8 @@
             console.log(msg);
             const overlay = document.getElementById('debug-overlay');
             if (overlay) {
-                overlay.style.display = 'block';
-                overlay.innerHTML += `<div style="color:${color}">${msg}</div>`;
+                // overlay.style.display = 'block';
+                // overlay.innerHTML += `<div style="color:${color}">${msg}</div>`;
             }
         }
 
